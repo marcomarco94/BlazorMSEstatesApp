@@ -1,0 +1,211 @@
+﻿@inject HttpClient Http
+@inject FilterService FilterService
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<section class="search-area">
+    <div class="container">
+        <div class="search-form">
+            <div class="row">
+                <div class="col-12">
+                    <div class="search-title">
+                        <p>Search for your home</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row offset-sm-4 offset-md-4 offset-xl-4">
+            <div class="col-sm-6 col-md-6 col-x1-5 btn-group">
+                <button class="search-input btn btn btn-outline-light btn-block @IsActiveButton("Sell")" @onclick="OnBuyClick">Buy</button>
+                <button class="search-input btn btn btn-outline-light btn-block @IsActiveButton("Rent")" @onclick="OnRentClick">Rent</button>
+            </div>
+        </div>
+
+        <div class="row mb-3 mt-3 offset-md-3 offset-lg-3">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                <div class="form-group">
+                    <input class="search-input form-control form-control-lg" id="search" type="text" placeholder="Search" aria-label="Search"
+                           @oninput="txt => OnSearchInput((string)txt.Value)"
+                           value="@FilterService.SearchInput"/>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mb-3">
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="form-group">
+                    <input class="search-input form-control form frm-outline-light" id="min-price"
+                           pattern="[0-9]*" type="text" placeholder="Min Price (THB)" aria-label="Min Price (THB)" maxlength="9"
+                           @oninput="txt => OnMinPriceInput((string)txt.Value)"
+                           value="@GetCurrentPrice("minPrice")"/>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="form-group">
+                    <input class="search-input form-control" id="max-price" type="text" pattern="[0-9]*"
+                           placeholder="Max Price (THB)" aria-label="Max Price (THB)" maxlength="9"
+                           @oninput="txt => OnMaxPriceInput((string)txt.Value)"
+                           value="@GetCurrentPrice("maxPrice")"/>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="form-group">
+                    <select class="search-input form-control" id="categories" @onchange="OnCategoryChange">
+                        <option selected="@(FilterService.SelectedCategory == "Category")" value="Category">Category</option>
+                        @if (_categories is not null)
+                        {
+                            foreach (var c in _categories)
+                            {
+                                <option selected="@(FilterService.SelectedCategory == c.Category)" value="@c.Category">@c.Category</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="form-group">
+                    <select class="search-input form-control" id="locations" @onchange="OnLocationChange">
+                        <option selected="@(FilterService.SelectedLocation == "Location")" value="Location">Location</option>
+                        @if (_locations is not null)
+                        {
+                            foreach (var l in _locations)
+                            {
+                                <option selected="@(FilterService.SelectedLocation == l.Location)" value="@l.Location">@l.Location</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            @if (_currentUrl == "")
+            {
+                <div class="vertical-align-center">
+                    <div class="col-12 col-sm-12 col-md-4 col-xl-4 btn-group">
+                        <button class="search-input btn btn btn-outline-light btn-block">
+                            <NavLink class="nav-link" href="listings">Search</NavLink>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private List<CategoryModel>? _categories;
+    private List<LocationModel>? _locations;
+    private List<AdvertisementTypeModel>? _advertisementType;
+    private string? _currentUrl;
+
+    protected override void OnInitialized()
+    {
+        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+       
+        _categories = await ApiService.GetCategories();
+        _locations = await ApiService.GetLocations();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await  FilterService.LoadFromLocalStorage();
+        }
+    }
+
+    private string IsActiveButton(string buttonName)
+    {
+        if (FilterService.SelectedAdvertisement == "All")
+        {
+            return "";
+        }
+        else
+        {
+            return FilterService.SelectedAdvertisement == buttonName ? "active" : "";
+        }
+    }
+
+    private void OnBuyClick()
+    {
+        if (FilterService.SelectedAdvertisement == "Sell")
+        {
+            FilterService.SelectedAdvertisement = "All";
+        }
+        else
+        {
+            FilterService.SelectedAdvertisement = "Sell";
+        }
+    }
+
+    private void OnRentClick()
+    {
+        if (FilterService.SelectedAdvertisement == "Rent")
+        {
+            FilterService.SelectedAdvertisement = "All";
+        }
+        else
+        {
+            FilterService.SelectedAdvertisement = "Rent";
+        }
+    }
+
+    private void OnCategoryChange(ChangeEventArgs e)
+    {
+        FilterService.SelectedCategory = e.Value?.ToString() ?? null;
+    }
+
+    private void OnLocationChange(ChangeEventArgs e)
+    {
+        FilterService.SelectedLocation = e.Value?.ToString() ?? null;
+    }
+
+    private void OnSearchInput(string? searchInput)
+    {
+        FilterService.SearchInput = searchInput;
+    }
+
+    private void  OnMinPriceInput(string? minPriceInput)
+    {
+        int minPrice;
+        FilterService.MinPriceInput = int.TryParse(minPriceInput, out minPrice) ? minPrice : 0;
+    }
+
+
+    private void OnMaxPriceInput(string? maxPriceInput)
+    {
+        int maxPrice;
+        FilterService.MaxPriceInput = int.TryParse(maxPriceInput, out maxPrice) ? maxPrice : 0;
+    }
+
+    private string GetCurrentPrice(string price)
+    {
+        int? output = null;
+
+        if (price == "minPrice")
+        {
+            output = FilterService.MinPriceInput;
+        }
+        else if (price == "maxPrice")
+        {
+            output = FilterService.MaxPriceInput;
+        }
+
+        if (output == 0)
+        {
+            output = null;
+        }
+
+        return output?.ToString() ?? "";
+    }
+
+}

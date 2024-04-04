@@ -1,0 +1,98 @@
+﻿@inject ApiService ApiService
+@inject HttpClient Http
+
+<footer id="footer" class="bg-one">
+    <div class="top-footer">
+        <div class="container">
+            <div class="row justify-content-around">
+                <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+                    <h3>about</h3>
+                    <p>
+                        Discover your dream property in Phuket with MS Estates. As local experts,
+                        we provide personalized real estate solutions,
+                        ensuring a seamless experience for buyers, sellers, and investors.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                    <ul>
+                        <li>
+                            <h3>Our Services</h3>
+                        </li>
+                        <li>
+                            <p>Property Listing and Marketing</p>
+                        </li>
+                        <li>
+                            <p>Investment Consultation</p>
+                        </li>
+                        <li>
+                            <p>Lawyer services</p>
+                        </li>
+                        <li>
+                            <p>Real Estate Financing Assistance</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-5 mb-md-0">
+                    <ul>
+                        <li>
+                            <h3>Quick Links</h3>
+                        </li>
+                        <li>
+                            <NavLink class="nav-link" href="listings">
+                                <p>Listings</p>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink class="nav-link" href="services">
+                                <p>Services</p>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink class="nav-link" href="contact">
+                                <p>Contact</p>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink class="nav-link" href="about-us">
+                                <p>About Us</p>
+                            </NavLink>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <ul>
+                        <li>
+                            <h3>Connect with us</h3>
+                        </li>
+                        <li>
+                            <NavLink class="nav-link" href="@_company?.Facebook">
+                                <p>Facebook</p>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <p>Phone @_company?.PhoneNumber</p>
+                        </li>
+                        <li>
+                            <p>Mail @_company?.MailAddress</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <h5>&copy; Copyright 2023. All rights reserved.</h5>
+        @* <h6>Design and Developed by Marco Pfleiderer</h6> *@
+    </div>
+</footer>
+
+@code {
+
+    private CompanyModel? _company = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+            _company = await ApiService.GetCompany();
+    }
+
+}

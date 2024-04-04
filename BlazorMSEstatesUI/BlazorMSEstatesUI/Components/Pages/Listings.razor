@@ -1,0 +1,262 @@
+﻿@page "/listings"
+@page "/listing-detail/{Id}"
+@using BlazorMSEstatesUI.Components.Layout
+@inject FilterService FilterService
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+@rendermode InteractiveServer 
+
+<PageTitle>Listings</PageTitle>
+
+<SearchListings/>
+
+<HeadContent>
+    <meta name="description" content="Explore our exclusive property listings in Phuket with MS Estates. Find the perfect home or investment opportunity.">
+    <meta name="keywords" content="Phuket property listings, Exclusive properties, MS Estates listings">
+    <meta property="og:title" content="Exclusive Property Listings by MS Estates in Phuket">
+    <meta property="og:description" content="Explore our property listings in Phuket with MS Estates. Find the perfect home, villa, pool villa, house or investment opportunity.">
+</HeadContent>
+
+
+<section class="listings-content m-0">
+    <div class="container">
+        <div class="row mt-1 mb-2">
+            <div class="col-2">
+                <h3 class="mb-0 mt-2">Listings</h3>
+            </div>
+            <div class="order-by col-2 offset-md-8 offset-5">
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                        Order by
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" @onclick="() => OnSortChange(true)">Price - Low to High</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" @onclick="() => OnSortChange(false)">Price - High to Low</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @if (_filteredListings is not null)
+            { 
+                @*  <Virtualize Items="@_filteredListings" Context="l" OverscanCount="15"> *@
+                foreach (var l in _filteredListings)
+                {
+                    <div class="col-12 col-md-6 col-xl-4 pb-4" id="@l.Id">
+                        <div class="single-featured-property mb-50">
+                            <div class="property-thumb" @onclick="async () => OpenDetails(l.Id)">
+                                <img loading="lazy" class="img-fluid" src="@l.ImageUrls.FirstOrDefault()" alt="Property Thumbnail" >
+                                <div class="tag">
+                                    <span>For @l.AdvertisementType.AdvertisementType</span>
+                                </div>
+                                <div class="list-price">
+                                    <p>@l.Price?.ToString("N0") ฿</p>
+                                </div>
+                            </div>
+                            <div class="property-content">
+                                <h5>@l.ListingName</h5>
+                                <p class="location">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" fill=#000000 class="bi bi-geo-fill" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
+                                    </svg>
+                                    @l.Location.Location
+                                </p>
+                                <p>@l.ShortDescription</p>
+                                <div class="property-meta-data d-flex align-items-end justify-content-between">
+                                    <div class="bathroom">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512" fill=#000000>
+                                            <path d="M96 77.3c0-7.3 5.9-13.3 13.3-13.3c3.5 0 6.9 1.4 9.4 3.9l14.9 14.9C130 91.8 128 101.7 128 112c0 19.9 7.2 38 19.2 52c-5.3 9.2-4 21.1 3.8 29c9.4 9.4 24.6 9.4 33.9 0L289 89c9.4-9.4 9.4-24.6 0-33.9c-7.9-7.9-19.8-9.1-29-3.8C246 39.2 227.9 32 208 32c-10.3 0-20.2 2-29.2 5.5L163.9 22.6C149.4 8.1 129.7 0 109.3 0C66.6 0 32 34.6 32 77.3V256c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H96V77.3zM32 352v16c0 28.4 12.4 54 32 71.6V480c0 17.7 14.3 32 32 32s32-14.3 32-32V464H384v16c0 17.7 14.3 32 32 32s32-14.3 32-32V439.6c19.6-17.6 32-43.1 32-71.6V352H32z"/>
+                                        </svg>
+                                        <span>@l.Bathrooms</span>
+                                    </div>
+                                    <div class="bed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 640 512" fill=#000000>
+                                            <path d="M32 32c17.7 0 32 14.3 32 32V320H288V160c0-17.7 14.3-32 32-32H544c53 0 96 43 96 96V448c0 17.7-14.3 32-32 32s-32-14.3-32-32V416H352 320 64v32c0 17.7-14.3 32-32 32s-32-14.3-32-32V64C0 46.3 14.3 32 32 32zm144 96a80 80 0 1 1 0 160 80 80 0 1 1 0-160z"/>
+                                        </svg>
+                                        <span>@l.Bedrooms</span>
+                                    </div>
+                                    <div class="space">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" fill=#000000 class="bi bi-bounding-box-circles" viewBox="0 0 16 16">
+                                            <path d="M2 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM0 2a2 2 0 0 1 3.937-.5h8.126A2 2 0 1 1 14.5 3.937v8.126a2 2 0 1 1-2.437 2.437H3.937A2 2 0 1 1 1.5 12.063V3.937A2 2 0 0 1 0 2zm2.5 1.937v8.126c.703.18 1.256.734 1.437 1.437h8.126a2.004 2.004 0 0 1 1.437-1.437V3.937A2.004 2.004 0 0 1 12.063 2.5H3.937A2.004 2.004 0 0 1 2.5 3.937zM14 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM2 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm12 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                        </svg>
+                                        <span>@l.Size sq m</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*   </Virtualize> *@
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <p class="text-center">One Moment...Loading...</p>
+                </div>
+            }
+        </div>
+        <button class="btn btn-primary btn-sm scrollToTopButton" @onclick="ScrollToTop">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
+            </svg>
+            Go to Top
+        </button>
+    </div>
+</section>
+
+@if (_showModal)
+{
+<Modal OnClose="CloseModal">
+    <div class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true" style="display: block;">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" style="font-size: 1.5em;  margin-right: 20px;" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseModal"></button>      
+                    </div>
+                <div class="modal-body">
+                    <ListingDetail Id=@Id></ListingDetail>
+                </div>
+            </div>
+        </div>
+    </div>
+</Modal>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+    private List<ListingModel>? _listings;
+    private List<ListingModel>? _filteredListings;
+    private bool _showModal = false;
+    private string? _selectedCategory = "Category";
+    private string? _selectedLocation = "Location";
+
+    protected override void OnInitialized()
+    {
+        FilterService.OnSearchFilterChanged += HandleSearchFilterChanged;
+    }
+    
+    protected override async Task OnInitializedAsync()
+   {
+       if (Id is not null)
+       {
+           _showModal = true;
+       }
+       else
+       {
+           _listings = await ApiService.GetListings();
+           await FilterListings();
+       }
+   }
+
+    private void OnSortChange(bool sortValue)
+    {
+        if (sortValue)
+        {
+            FilterService.SortedBy = "Price - Low to High";
+        }
+        else
+        {
+            FilterService.SortedBy = "Price - High to Low";
+        }
+    }
+    
+
+    private async void HandleSearchFilterChanged()
+    {
+        await InvokeAsync(async () => await FilterListings());
+    }
+
+    private async Task  CloseModal()
+    {
+        _showModal = false;
+        if (_filteredListings is null)
+        {
+            _listings = await ApiService.GetListings();
+            await FilterListings();
+        }
+    } 
+    
+    private async Task FilterListings()
+    {
+        _filteredListings = new List<ListingModel>(_listings);
+
+        if (_filteredListings is not null)
+        {
+            if (FilterService.SelectedAdvertisement != "All")
+            {
+                _filteredListings = _filteredListings.Where(l => l.AdvertisementType?.AdvertisementType == FilterService.SelectedAdvertisement).ToList();
+            }
+
+            if (FilterService.SelectedCategory != "Category")
+            {
+                _filteredListings = _filteredListings.Where(l => l.Category?.Category == FilterService.SelectedCategory).ToList();
+            }
+
+            if (FilterService.SelectedLocation != "Location")
+            {
+                _filteredListings = _filteredListings.Where(l => l.Location?.Location == FilterService.SelectedLocation).ToList();
+            }
+
+            if (string.IsNullOrWhiteSpace(FilterService.SearchInput) == false)
+            {
+                _filteredListings = _filteredListings.Where(l => l.ListingName.Contains(FilterService.SearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                                                 l.Location.Location.Contains(FilterService.SearchInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            }
+
+            if (FilterService.MaxPriceInput > 0)
+            {
+                _filteredListings = _filteredListings.Where(l => l.Price <= FilterService.MaxPriceInput).ToList();
+            }
+
+            if (FilterService.MinPriceInput > 0)
+            {
+                _filteredListings = _filteredListings.Where(l => l.Price >= FilterService.MinPriceInput).ToList();
+            }
+
+            if (FilterService.SortedBy == "Price - Low to High" || FilterService.SortedBy == null)
+            {
+                _filteredListings = _filteredListings.OrderBy(l => l.Price).ToList();
+            }
+            else if (FilterService.SortedBy == "Price - High to Low")
+            {
+                _filteredListings = _filteredListings.OrderByDescending(l => l.Price).ToList();
+            }
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        FilterService.OnSearchFilterChanged -= HandleSearchFilterChanged;
+    }
+
+    private async Task OpenDetails(string id)
+    {
+        bool isMobileDevice = await JsRuntime.InvokeAsync<bool>("eval", "(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))");
+        if (!isMobileDevice)
+        {
+            await JsRuntime.InvokeVoidAsync("open", $"/listing-detail/{id}", "_blank");
+        }
+        else
+        {
+            Id = id;
+            _showModal = true;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    private async Task ScrollToTop()
+    {
+        await JsRuntime.InvokeVoidAsync("scrollToTop");
+    }
+}

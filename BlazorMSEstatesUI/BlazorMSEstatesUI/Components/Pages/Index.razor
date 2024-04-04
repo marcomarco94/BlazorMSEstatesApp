@@ -1,0 +1,109 @@
+﻿@page "/"
+@using BlazorMSEstatesUI.Components.Layout
+@inject FilterService FilterService
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Explore real estate listings in Phuket with MS Estates. Find your dream property with our team.">
+    <meta name="keywords" content="Phuket real estate, Property listings, MS Estates, Dream property">
+    <meta property="og:title" content="MS Estates - Your Gateway to Phuket Real Estate">
+    <meta property="og:description" content="Explore choosen real estate listings in Phuket with MS Estates. Find your dream property with us.">
+</HeadContent>
+
+<section class="hero-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block mt-2">
+                    <h1>Property for Rent and Sale Phuket</h1>
+                    <p>Welcome to MS Estates, your trusted Phuket real estate partner, offering exceptional property solutions for residents and investors.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<SearchListings/>
+
+<section class="portfolio section-sm" id="portfolio">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="title text-center">
+                    <h2>Popular Categories</h2>
+                    <p>
+                        Welcome to MS Estates, your trusted partner for real estate on the
+                        stunning island of Phuket. Explore our diverse property categories tailored to
+                        meet your individual needs. Whether you're in search of a dream home, a lucrative investment,
+                        or temporary accommodation, we have the perfect solution for you.
+                    </p>
+                    <div class="border"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @if (_categories is not null)
+            {
+                @foreach (var c in _categories)
+                {
+                    <div class="col-md-3 col-sm-6 col-xs-6 mb-3">
+                        <div class="img-thumbnail" @onclick="() => OpenCategory(c.Category)">
+                            <img class="img-fluid" src="@c.Image" alt="Listing Category @c.Category">
+                            <h4>
+                                @c.Category
+                            </h4>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+</section>
+<section class="team-skills section-sm" id="choose-us">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="title text-center">
+                    <h2>Why choose Us</h2>
+                    <p>
+                        At MS Estates, we understand that the real estate journey is a significant decision,
+                        and choosing the right partner makes all the difference. That is why discerning clients
+                        choose us for their property needs in Phuket.
+                    </p>
+                    <div class="col-lg-6 mt-4 mb-4 mx-auto text-center">
+                        <img class="img-fluid" src="images/about-us/us1.jpg" alt="Us">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+
+    private List<CategoryModel>? _categories;
+    
+    protected override void OnInitialized()
+    {
+        JsRuntime.InvokeVoidAsync("scrollToTop");
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await ApiService.GetCategories();
+    }
+
+    private void OpenCategory(string category)
+    {
+        FilterService.SelectedCategory = category;
+        NavigationManager.NavigateTo("/listings/");
+    }
+
+}

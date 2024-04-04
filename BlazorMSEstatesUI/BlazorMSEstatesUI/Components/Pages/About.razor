@@ -1,0 +1,100 @@
+﻿@page "/about-us"
+@inject IJSRuntime JsRuntime
+
+<PageTitle>About Us</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Learn about MS Estates, your trusted partner for real estate services in Phuket. Discover our mission and values.">
+    <meta name="keywords" content="MS Estates, Phuket real estate, Real estate services, Company mission">
+    <meta property="og:title" content="About MS Estates - Your Trusted Real Estate Partner in Phuket">
+    <meta property="og:description" content="Learn about MS Estates, your trusted partner for real estate services in Phuket. Discover our mission and values.">
+</HeadContent>
+
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mt-20">
+                <h2 class="mb-3">Our Mission</h2>
+                <p>
+                    At MS Estates, our mission is simple yet profound:
+                    to deliver excellent service that exceeds our customers' expectations.
+                </p>
+                <p>
+                    With a commitment to professionalism, integrity, and a personalized approach,
+                    we strive to make your real estate journey in Phuket seamless and rewarding.
+                </p>
+                <p>
+                    We are a team of experienced real estate professionals who are passionate about what we do.
+                    We are committed to providing you with the best service possible,
+                    and we will work tirelessly to ensure that you find the perfect property for your needs.
+                </p>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <img class="img-fluid" src="images/about-us/us1.jpg" alt="Us">
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section-sm bg-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Customer-Centric Approach</h3>
+                <p>
+                    Listening is at the heart of what we do. We understand that your real estate needs are unique,
+                    and we are dedicated to understanding and fulfilling your requirements.
+                    Whether you're seeking a dream home, an investment property, or a piece of paradise, we are here to guide you every step of the way.
+                </p>
+                <p>
+                    We are committed to providing you with the best service possible,
+                    and we will work tirelessly to ensure that you find the perfect property for your needs.
+                </p>
+                <img src="images/about-us/customer-centric.jpg" alt="Customer-Centric Approach" class="img-fluid mt-30">
+            </div>
+            <div class="col-md-6 mt-5 mt-md-0">
+                <h3>Experience Matters</h3>
+                <p>
+                    With several years of active involvement in the real estate business,
+                    we bring a wealth of experience to the table. Our seasoned team possesses in-depth knowledge of the Phuket property market, trends,
+                    and legal intricacies. This expertise allows us to navigate the complexities of the real estate landscape,
+                    ensuring a smooth and informed experience for our clients.
+                </p>
+                <img src="images/about-us/experience.jpg" alt="Experience Matters" class="img-fluid mt-30">
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="why-us section-sm">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="title text-center">
+                    <h2>Why Choose MS Estates?</h2>
+                    <h6>Proven Track Record:</h6>
+                    <p> Our history of successful transactions and satisfied clients speaks for itself.</p>
+                    <h6>Local Expertise:</h6>
+                    <p>As long-time residents of Phuket, we have a deep understanding of the local market, enabling us to provide valuable insights and guidance.</p>
+                    <h6>Personalized Service:</h6>
+
+                    <p>Your goals are our priorities. We believe in forging lasting relationships and tailoring our services to meet your individual needs.</p>
+                    <h5> Join us at MS Estates and let us transform your real estate aspirations into reality. Experience excellence, professionalism, and personalized service – because you deserve nothing less.</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@code {
+    
+    protected override void OnInitialized()
+    {
+        JsRuntime.InvokeVoidAsync("scrollToTop");
+    }
+    
+}

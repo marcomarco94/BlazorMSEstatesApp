@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "storage1": {
+      "ignored": "true",
+      "type": "storage",
+      "connectionId": "MSEstatesStorage"
+    },
+    "identityapp1": {
+      "ignored": "true",
+      "type": "identityapp"
+    },
+    "storage2": {
+      "ignored": "true",
+      "type": "storage",
+      "connectionId": "MSEstatesStorage"
+    }
+  }
+}

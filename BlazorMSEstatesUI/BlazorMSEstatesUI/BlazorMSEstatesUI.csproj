@@ -1,0 +1,99 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-BlazorMSEstatesUI-a404accb-f18a-4d33-8ae4-f14bf75aff0e</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
+    <PackageReference Include="StatefulReconnection" Version="0.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\animate\animate.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\filterizr\jquery.filterizr.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\jquery\jquery.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\css\lightbox.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\css\lightbox.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\images\close.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\images\loading.gif" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\images\next.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\images\prev.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox-plus-jquery.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox-plus-jquery.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox-plus-jquery.min.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\lightbox2\js\lightbox.min.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\parallax\jquery.parallax-1.1.3.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\ajax-loader.gif" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\fonts\slick.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\fonts\slick.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\fonts\slick.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\fonts\slick.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\slick.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\slick\slick.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\smooth-scroll\smooth-scroll.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\themefisher-font\fonts\themefisher-font.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\themefisher-font\fonts\themefisher-font.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\themefisher-font\fonts\themefisher-font.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\plugins\themefisher-font\style.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\bathtub.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\envelope.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\flat.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\garage.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\home3.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\house1.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\house2.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\location.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\new.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\new2.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\phone-call.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\prize.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\prize2.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\rent.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\signature.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\icons\space.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\blog1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\blog2.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\blog3.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\c-1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\c-2.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\blog-img\c-3.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\about.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\cta.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\editor.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\fea-product.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature2.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature3.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature4.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature5.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature6.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature7.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature8.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\feature9.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\footer.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\hero1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\hero2.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\hero3.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\hero4.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\hero5.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\listing.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\team1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\team2.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\team3.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\img\style.css" />
+    <_ContentIncludedByDefault Remove="Pages\Authentication.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Properties\serviceDependencies.local.json" />
+    <None Remove="Properties\serviceDependencies.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\js\jscript.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
