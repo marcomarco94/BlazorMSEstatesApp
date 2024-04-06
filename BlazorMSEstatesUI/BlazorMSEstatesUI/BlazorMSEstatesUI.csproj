@@ -6,9 +6,7 @@
     <UserSecretsId>aspnet-BlazorMSEstatesUI-a404accb-f18a-4d33-8ae4-f14bf75aff0e</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
-    <PackageReference Include="StatefulReconnection" Version="0.1.0" />
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\plugins\animate\animate.css" />
@@ -92,6 +90,9 @@
     <None Remove="Properties\serviceDependencies.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="wwwroot\js\boot.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\js\jscript.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

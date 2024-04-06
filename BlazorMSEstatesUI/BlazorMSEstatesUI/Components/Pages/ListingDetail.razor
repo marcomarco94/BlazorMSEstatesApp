@@ -1,7 +1,7 @@
 ﻿@inject ApiService ApiService
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
-
+@page "/listing-detail/{Id}"
 <PageTitle>Listing Detail</PageTitle>
 
 <HeadContent>
@@ -195,10 +195,5 @@
 
         _realtorContactForm = new RealtorContactModel();
         return _submitButton;
-    }
-    
-    private async Task AdjustCarouselArrows()
-    {
-        await JsRuntime.InvokeVoidAsync("adjustCarouselArrows");
     }
 }

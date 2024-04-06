@@ -76,21 +76,23 @@
 
     protected override void OnInitialized()
     {
-        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        if (_currentUrl is not null && _currentUrl.Contains("/"))
-            _currentUrl = _currentUrl.Substring(0, _currentUrl.IndexOf("/"));
-
         NavigationManager.LocationChanged += OnLocationChanged;
-
+        OnLocationChanged(this, new LocationChangedEventArgs(NavigationManager.Uri, false));
         JsRuntime.InvokeVoidAsync("navbarToggler");
     }
-
-
+    
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        if (_currentUrl is not null && _currentUrl.Contains("/"))
-            _currentUrl = _currentUrl.Substring(0, _currentUrl.IndexOf("/"));
+        var uri = new Uri(NavigationManager.Uri);
+        var segments = uri.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        _currentUrl = segments.Length > 0 ? segments[0].ToUpper() : "";
+
+        var questionMarkIndex = _currentUrl.IndexOf("?");
+        if (questionMarkIndex != -1)
+        {
+            _currentUrl = _currentUrl.Substring(0, questionMarkIndex);
+        }
+        
         StateHasChanged();
     }
 

@@ -1,5 +1,4 @@
 ﻿@page "/listings"
-@page "/listing-detail/{Id}"
 @using BlazorMSEstatesUI.Components.Layout
 @inject FilterService FilterService
 @inject ApiService ApiService
@@ -52,7 +51,7 @@
                 @*  <Virtualize Items="@_filteredListings" Context="l" OverscanCount="15"> *@
                 foreach (var l in _filteredListings)
                 {
-                    <div class="col-12 col-md-6 col-xl-4 pb-4" id="@l.Id">
+                    <div class="col-12 col-md-6 col-xl-4 pb-4">
                         <div class="single-featured-property mb-50">
                             <div class="property-thumb" @onclick="async () => OpenDetails(l.Id)">
                                 <img loading="lazy" class="img-fluid" src="@l.ImageUrls.FirstOrDefault()" alt="Property Thumbnail" >
@@ -114,48 +113,23 @@
     </div>
 </section>
 
-@if (_showModal)
-{
-<Modal OnClose="CloseModal">
-    <div class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true" style="display: block;">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" style="font-size: 1.5em;  margin-right: 20px;" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseModal"></button>      
-                    </div>
-                <div class="modal-body">
-                    <ListingDetail Id=@Id></ListingDetail>
-                </div>
-            </div>
-        </div>
-    </div>
-</Modal>
-}
-
 @code {
-    [Parameter] public string? Id { get; set; }
     private List<ListingModel>? _listings;
     private List<ListingModel>? _filteredListings;
-    private bool _showModal = false;
     private string? _selectedCategory = "Category";
     private string? _selectedLocation = "Location";
-
+    
+    
     protected override void OnInitialized()
     {
         FilterService.OnSearchFilterChanged += HandleSearchFilterChanged;
+        FilterService.GetQueryParameters(new Uri (NavigationManager.Uri));
     }
     
     protected override async Task OnInitializedAsync()
    {
-       if (Id is not null)
-       {
-           _showModal = true;
-       }
-       else
-       {
            _listings = await ApiService.GetListings();
-           await FilterListings();
-       }
+           _filteredListings = await FilterService.FilterListings(_listings);
    }
 
     private void OnSortChange(bool sortValue)
@@ -169,69 +143,22 @@
             FilterService.SortedBy = "Price - High to Low";
         }
     }
-    
 
     private async void HandleSearchFilterChanged()
     {
+       
         await InvokeAsync(async () => await FilterListings());
     }
-
-    private async Task  CloseModal()
-    {
-        _showModal = false;
-        if (_filteredListings is null)
-        {
-            _listings = await ApiService.GetListings();
-            await FilterListings();
-        }
-    } 
     
     private async Task FilterListings()
     {
-        _filteredListings = new List<ListingModel>(_listings);
-
-        if (_filteredListings is not null)
+        var uriBuilder = new UriBuilder(NavigationManager.Uri)
         {
-            if (FilterService.SelectedAdvertisement != "All")
-            {
-                _filteredListings = _filteredListings.Where(l => l.AdvertisementType?.AdvertisementType == FilterService.SelectedAdvertisement).ToList();
-            }
-
-            if (FilterService.SelectedCategory != "Category")
-            {
-                _filteredListings = _filteredListings.Where(l => l.Category?.Category == FilterService.SelectedCategory).ToList();
-            }
-
-            if (FilterService.SelectedLocation != "Location")
-            {
-                _filteredListings = _filteredListings.Where(l => l.Location?.Location == FilterService.SelectedLocation).ToList();
-            }
-
-            if (string.IsNullOrWhiteSpace(FilterService.SearchInput) == false)
-            {
-                _filteredListings = _filteredListings.Where(l => l.ListingName.Contains(FilterService.SearchInput, StringComparison.InvariantCultureIgnoreCase) ||
-                                                                 l.Location.Location.Contains(FilterService.SearchInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            }
-
-            if (FilterService.MaxPriceInput > 0)
-            {
-                _filteredListings = _filteredListings.Where(l => l.Price <= FilterService.MaxPriceInput).ToList();
-            }
-
-            if (FilterService.MinPriceInput > 0)
-            {
-                _filteredListings = _filteredListings.Where(l => l.Price >= FilterService.MinPriceInput).ToList();
-            }
-
-            if (FilterService.SortedBy == "Price - Low to High" || FilterService.SortedBy == null)
-            {
-                _filteredListings = _filteredListings.OrderBy(l => l.Price).ToList();
-            }
-            else if (FilterService.SortedBy == "Price - High to Low")
-            {
-                _filteredListings = _filteredListings.OrderByDescending(l => l.Price).ToList();
-            }
-        }
+            Path = "/listings",
+            Query = $"searchInput={FilterService.SearchInput}&minPrice={FilterService.MinPriceInput}&maxPrice={FilterService.MaxPriceInput}&category={FilterService.SelectedCategory}&location={FilterService.SelectedLocation}&selectedAdvertisement={FilterService.SelectedAdvertisement}&sortedBy={FilterService.SortedBy}"
+        };
+        NavigationManager.NavigateTo(uriBuilder.ToString(), false);
+        _filteredListings = await FilterService.FilterListings(_listings);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -249,9 +176,7 @@
         }
         else
         {
-            Id = id;
-            _showModal = true;
-            await InvokeAsync(StateHasChanged);
+          NavigationManager.NavigateTo($"/listing-detail/{id}", true);
         }
     }
     

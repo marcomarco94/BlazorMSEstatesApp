@@ -2,7 +2,7 @@
 @inject FilterService FilterService
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
-@rendermode InteractiveServer
+
 
 <section class="search-area">
     <div class="container">
@@ -40,7 +40,7 @@
                     <input class="search-input form-control form frm-outline-light" id="min-price"
                            pattern="[0-9]*" type="text" placeholder="Min Price (THB)" aria-label="Min Price (THB)" maxlength="9"
                            @oninput="txt => OnMinPriceInput((string)txt.Value)"
-                           value="@GetCurrentPrice("minPrice")"/>
+                           value="@FilterService.MinPriceInput"/>
                 </div>
             </div>
 
@@ -49,7 +49,7 @@
                     <input class="search-input form-control" id="max-price" type="text" pattern="[0-9]*"
                            placeholder="Max Price (THB)" aria-label="Max Price (THB)" maxlength="9"
                            @oninput="txt => OnMaxPriceInput((string)txt.Value)"
-                           value="@GetCurrentPrice("maxPrice")"/>
+                           value="@FilterService.MaxPriceInput"/>
                 </div>
             </div>
 
@@ -59,10 +59,10 @@
                         <option selected="@(FilterService.SelectedCategory == "Category")" value="Category">Category</option>
                         @if (_categories is not null)
                         {
-                            foreach (var c in _categories)
-                            {
-                                <option selected="@(FilterService.SelectedCategory == c.Category)" value="@c.Category">@c.Category</option>
-                            }
+                        foreach (var c in _categories)
+                        {
+                        <option selected="@(FilterService.SelectedCategory == c.Category)" value="@c.Category">@c.Category</option>
+                        }
                         }
                     </select>
                 </div>
@@ -74,24 +74,22 @@
                         <option selected="@(FilterService.SelectedLocation == "Location")" value="Location">Location</option>
                         @if (_locations is not null)
                         {
-                            foreach (var l in _locations)
-                            {
-                                <option selected="@(FilterService.SelectedLocation == l.Location)" value="@l.Location">@l.Location</option>
-                            }
+                        foreach (var l in _locations)
+                        {
+                        <option selected="@(FilterService.SelectedLocation == l.Location)" value="@l.Location">@l.Location</option>
+                        }
                         }
                     </select>
                 </div>
             </div>
-
             @if (_currentUrl == "")
             {
-                <div class="vertical-align-center">
-                    <div class="col-12 col-sm-12 col-md-4 col-xl-4 btn-group">
-                        <button class="search-input btn btn btn-outline-light btn-block">
-                            <NavLink class="nav-link" href="listings">Search</NavLink>
-                        </button>
-                    </div>
+            <div class="vertical-align-center">
+                <div class="col-12 col-sm-12 col-md-4 col-xl-4 btn-group">
+                    <button class="search-input btn btn btn-outline-light btn-block" @onclick="OnSearchClick">Search
+                    </button>
                 </div>
+            </div>
             }
         </div>
     </div>
@@ -107,20 +105,13 @@
     {
         _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
-       
+
         _categories = await ApiService.GetCategories();
         _locations = await ApiService.GetLocations();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await  FilterService.LoadFromLocalStorage();
-        }
+        FilterService.GetQueryParameters(new Uri(NavigationManager.Uri));
     }
 
     private string IsActiveButton(string buttonName)
@@ -129,10 +120,7 @@
         {
             return "";
         }
-        else
-        {
-            return FilterService.SelectedAdvertisement == buttonName ? "active" : "";
-        }
+        return FilterService.SelectedAdvertisement == buttonName ? "active" : "";
     }
 
     private void OnBuyClick()
@@ -159,6 +147,17 @@
         }
     }
 
+    private void OnSearchClick()
+    {
+        var uriBuilder = new UriBuilder(NavigationManager.Uri)
+        {
+            Path = "/listings",
+            Query = $"searchInput={FilterService.SearchInput}&minPrice={FilterService.MinPriceInput}&maxPrice={FilterService.MaxPriceInput}&category={FilterService.SelectedCategory}&location={FilterService.SelectedLocation}&selectedAdvertisement={FilterService.SelectedAdvertisement}"
+        };
+
+        NavigationManager.NavigateTo(uriBuilder.ToString(), false);
+    }
+
     private void OnCategoryChange(ChangeEventArgs e)
     {
         FilterService.SelectedCategory = e.Value?.ToString() ?? null;
@@ -176,36 +175,12 @@
 
     private void  OnMinPriceInput(string? minPriceInput)
     {
-        int minPrice;
-        FilterService.MinPriceInput = int.TryParse(minPriceInput, out minPrice) ? minPrice : 0;
+        FilterService.MinPriceInput = minPriceInput;
     }
 
 
     private void OnMaxPriceInput(string? maxPriceInput)
     {
-        int maxPrice;
-        FilterService.MaxPriceInput = int.TryParse(maxPriceInput, out maxPrice) ? maxPrice : 0;
+        FilterService.MaxPriceInput = maxPriceInput;
     }
-
-    private string GetCurrentPrice(string price)
-    {
-        int? output = null;
-
-        if (price == "minPrice")
-        {
-            output = FilterService.MinPriceInput;
-        }
-        else if (price == "maxPrice")
-        {
-            output = FilterService.MaxPriceInput;
-        }
-
-        if (output == 0)
-        {
-            output = null;
-        }
-
-        return output?.ToString() ?? "";
-    }
-
 }

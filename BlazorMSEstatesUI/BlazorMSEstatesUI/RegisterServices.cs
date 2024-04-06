@@ -23,7 +23,5 @@ public static class RegisterServices
         builder.Services.AddSingleton<StateService>();
         builder.Services.AddScoped<FilterService>();
         builder.Services.AddScoped<ApiService>();
-        builder.Services.AddBlazoredLocalStorage();
-
     }
 }
