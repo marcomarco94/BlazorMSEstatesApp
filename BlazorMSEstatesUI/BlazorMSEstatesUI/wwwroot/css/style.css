@@ -154,6 +154,20 @@ a:focus, a:hover {
     display: none;
 }
 
+.logo-default, .logo-white {
+    width: 75px;
+    height: 75px;
+    margin: 15px;
+}
+
+@media (max-width: 768px) {
+    .logo-default, .logo-white {
+        width: 60px;
+        height: 60px;
+        margin: 10px;
+    }
+}
+
 .navigation .navbar-light .navbar-nav .nav-item .nav-link {
     color: #000;
     font-size: 14px;

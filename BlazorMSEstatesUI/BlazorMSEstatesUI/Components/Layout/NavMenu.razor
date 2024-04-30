@@ -7,8 +7,8 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light px-0 py-0">
             <NavLink class="navbar-brand logo" href="">
-                <img height="80" width="80" class="logo-default" src="images/logo.png" style="margin: 15px;" alt="logo"/>
-                <img height="80" width="80" class="logo-white" src="images/logo-white.png" style="margin: 15px;" alt="logo"/>
+                <img class="logo-default" src="images/logo.png" alt="logo"/>
+                <img class="logo-white" src="images/logo-white.png" alt="logo"/>
             </NavLink>
             <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navigation"
                     aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation" onclick="document.querySelector('.navbar-toggler').click()">
@@ -18,19 +18,19 @@
             <div class="navbar-collapse collapse" id="navigation">
                 <ul class="navbar-nav ml-auto text-center">
                     <li class="nav-item">
-                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Home</NavLink>
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All" data-enhance-nav="false">Home</NavLink>
                     </li>
                     <li class="nav-item ">
-                        <NavLink class="nav-link" href="listings">Listings</NavLink>
+                        <NavLink class="nav-link" href="listings" data-enhance-nav="false">Listings</NavLink>
                     </li>
                     <li class="nav-item ">
-                        <NavLink class="nav-link" href="services">Services</NavLink>
+                        <NavLink class="nav-link" href="services" data-enhance-nav="false">Services</NavLink>
                     </li>
                     <li class="nav-item ">
-                        <NavLink class="nav-link" href="contact">Contact</NavLink>
+                        <NavLink class="nav-link" href="contact" data-enhance-nav="false">Contact</NavLink>
                     </li>
                     <li class="nav-item ">
-                        <NavLink class="nav-link" href="about-us">About us</NavLink>
+                        <NavLink class="nav-link" href="about-us" data-enhance-nav="false">About us</NavLink>
                     </li>
                 </ul>
 
@@ -61,7 +61,7 @@
                     <h2>@_currentUrl.ToUpper()</h2>
                     <ol class="breadcrumb header-bradcrumb justify-content-center">
                         <li class="breadcrumb-item">
-                            <NavLink href="" class="text-white">HOME</NavLink>
+                            <NavLink href="" class="text-white" data-enhance-nav="false">HOME</NavLink>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">@_currentUrl.ToUpper()</li>
                     </ol>

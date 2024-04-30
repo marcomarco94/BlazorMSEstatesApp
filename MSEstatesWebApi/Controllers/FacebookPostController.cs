@@ -29,8 +29,8 @@ public class FacebookPostController : Controller
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     [HttpPost]
     [Route("CreateFacebookPost")]
-    public async Task AddLocation(FacebookPostModel facebookPost)
+    public async Task CreatePost(FacebookPostModel facebookPost)
     {
-        if (ModelState.IsValid) await _facebookData.CreateFacebookPost(facebookPost);
+         await _facebookData.CreateFacebookPost(facebookPost);
     }
 }
