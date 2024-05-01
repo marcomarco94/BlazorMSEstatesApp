@@ -1,5 +1,4 @@
 ﻿@page "/about-us"
-@inject IJSRuntime JsRuntime
 
 <PageTitle>About Us</PageTitle>
 
@@ -91,10 +90,4 @@
 
 
 @code {
-    
-    protected override void OnInitialized()
-    {
-        JsRuntime.InvokeVoidAsync("scrollToTop");
-    }
-    
 }

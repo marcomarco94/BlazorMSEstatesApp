@@ -1,6 +1,7 @@
+using BlazorMSEstatesUI.Components.Models;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace BlazorMSEstatesUI.Client.Services;
+namespace BlazorMSEstatesUI.Components.Services;
 
 public class FilterService
 {

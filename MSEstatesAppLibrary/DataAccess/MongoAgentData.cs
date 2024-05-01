@@ -22,7 +22,7 @@ public class MongoAgentData : IAgentData
         {
             var result = await _agents.FindAsync(a => a.AgentId == id);
             output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(60));
+            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
         }
 
         return output;

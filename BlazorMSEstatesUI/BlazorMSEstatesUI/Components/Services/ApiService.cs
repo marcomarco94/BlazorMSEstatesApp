@@ -1,122 +1,104 @@
 
-namespace BlazorMSEstatesUI.Client.Services;
+using BlazorMSEstatesUI.Components.Pages;
+using Microsoft.Extensions.Caching.Memory;
+namespace BlazorMSEstatesUI.Components.Services;
 
 public class ApiService
 {
     private IConfiguration _config;
     private readonly HttpClient _http;
     private readonly string? _basePath;
-    private readonly StateService _stateService;
+    private readonly IMemoryCache _cache;
+    private readonly CacheService _cacheService;
 
-
-    public ApiService(IConfiguration config, HttpClient http, StateService stateService)
+    public ApiService(IConfiguration config, HttpClient http, CacheService cacheService)
     {
         _config = config;
         _basePath = _config.GetValue<string>("ImgBasePath");
         _http = http;
-        _stateService = stateService;
+        _cacheService = cacheService;
        
     }
-    
+
     public async Task<List<ListingModel>> GetListings()
     {
-         if (_stateService.Listings == null)
-         {
-            try
-            {
-                _stateService.Listings = await _http.GetFromJsonAsync<List<ListingModel>>("api/Listing");
-                foreach (var listing in _stateService.Listings)
-                {
-                    listing.ImageUrls = listing.ImageUrls.Select(url => Path.Combine(_basePath, url)).ToList();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-         } 
-         return _stateService.Listings;
-    }
-    
-    public async Task<List<CategoryModel>> GetCategories()
-    {
-        if (_stateService.Categories == null)
+        List<ListingModel> listings;
+         listings = _cacheService.Get<List<ListingModel>>(nameof(listings));
+        if (listings == null)
         {
-            try
+            listings = await _http.GetFromJsonAsync<List<ListingModel>>("api/Listing");
+            foreach (var listing in listings)
             {
-                _stateService.Categories = await _http.GetFromJsonAsync<List<CategoryModel>>("api/Category");
+                listing.ImageUrls = listing.ImageUrls.Select(url => Path.Combine(_basePath, url)).ToList();
+                listing.ImageUrlsOrg = listing.ImageUrls.Select(url =>
+                {
+                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(url);
+                    var extension = Path.GetExtension(url);
+                    var newFileName = $"{fileNameWithoutExtension}_org{extension}";
+                    return Path.Combine(_basePath, newFileName);
+                }).ToList();
+
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            _cacheService.Set(nameof(listings), listings);
         }
 
-        return _stateService.Categories;
+        return listings;
+    }
+    
+    
+
+    public async Task<List<CategoryModel>> GetCategories()
+    {
+        List <CategoryModel> categories;
+        categories = _cacheService.Get<List<CategoryModel>>(nameof(categories));
+            if (categories == null)
+            {
+                categories = await _http.GetFromJsonAsync<List<CategoryModel>>("api/Category");
+                _cacheService.Set(nameof(categories), categories);
+            }
+        return categories;
     }
     
     public async Task<CompanyModel> GetCompany()
     {
-        if (_stateService.Company == null)
+        CompanyModel company;
+        company = _cacheService.Get<CompanyModel>(nameof(company));
+        if (company == null)
         {
-            try
-            {
-                _stateService.Company = await _http.GetFromJsonAsync<CompanyModel>("api/Company");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            company = await _http.GetFromJsonAsync<CompanyModel>("api/Company");
+            _cacheService.Set(nameof(company), company);
         }
-
-        return _stateService.Company;
+        return company;
     }
     
     public async Task<List<LocationModel>> GetLocations()
     {
-        if (_stateService.Locations == null)
+        List<LocationModel> locations;
+        locations = _cacheService.Get<List<LocationModel>>(nameof(locations));
+        if (locations == null)
         {
-            try
-            {
-                _stateService.Locations = await _http.GetFromJsonAsync<List<LocationModel>>("api/Location");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+                locations = await _http.GetFromJsonAsync<List<LocationModel>>("api/Location");
+                _cacheService.Set(nameof(locations), locations);
         }
-
-        return _stateService.Locations;
+        return locations;
     }
-    
+
+
     public async Task<ListingModel> GetListingById(string id)
     {
-        if (_stateService.Listings != null)
+        List<ListingModel> listings;
+        ListingModel listing = null;
+
+        listings = _cacheService.Get<List<ListingModel>>(nameof(listings));
+        if (listings.Any())
         {
-            
-            var listing = _stateService.Listings.FirstOrDefault(l => l.Id == id);
-            if (listing != null)
-            {
-                _stateService.Listing = listing;
-                return _stateService.Listing;
-            }
+            listing = listings.FirstOrDefault(l => l.Id == id);
         }
-        
-        try
+
+        if (listing == null)
         {
-            _stateService.Listing = await _http.GetFromJsonAsync<ListingModel>($"api/Listing/{id}");
-            _stateService.Listing.ImageUrls = _stateService.Listing.ImageUrls.Select(url => Path.Combine(_basePath, url)).ToList();
+            listing = await _http.GetFromJsonAsync<ListingModel>($"api/Listing/{id}");
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        return _stateService.Listing;
+        return listing;
     }
-    
 }

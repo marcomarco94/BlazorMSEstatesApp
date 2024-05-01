@@ -179,7 +179,7 @@ a:focus, a:hover {
     background-color: transparent;
 }
 
-.navigation .navbar-light .navbar-nav .nav-item .nav-link:hover, .navigation .navbar-light .navbar-nav .nav-item .nav-link:active, .navigation .navbar-light .navbar-nav .nav-item .nav-link:focus {
+.navigation .navbar-light .navbar-nav .nav-item .nav-link:hover, .navigation .navbar-light .navbar-nav .nav-item .nav-link.active, .navigation .navbar-light .navbar-nav .nav-item .nav-link.focus {
     background: none;
     color: #28ABE3;
 }
@@ -249,6 +249,8 @@ a:focus, a:hover {
     border-radius: 5px;
     padding: 8px 8px 8px 8px;
 }
+
+
 
 .sticky-header .logo-default {
     display: none;

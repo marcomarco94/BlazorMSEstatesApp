@@ -1,7 +1,5 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JsRuntime
-@rendermode InteractiveServer
 
 <header class="navigation fixed-top"> 
     <div class="container">
@@ -47,7 +45,6 @@
                     </li>
                 </ul>
             </div>
-
         </nav>
     </div>
 </header>
@@ -78,7 +75,6 @@
     {
         NavigationManager.LocationChanged += OnLocationChanged;
         OnLocationChanged(this, new LocationChangedEventArgs(NavigationManager.Uri, false));
-        JsRuntime.InvokeVoidAsync("navbarToggler");
     }
     
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

@@ -1,5 +1,4 @@
 ﻿@page "/services"
-@inject IJSRuntime JsRuntime
 
 <PageTitle>Services</PageTitle>
 
@@ -107,8 +106,4 @@
 </section>
 
 @code {
-    protected override void OnInitialized()
-    {
-        JsRuntime.InvokeVoidAsync("scrollToTop");
-    }
 }

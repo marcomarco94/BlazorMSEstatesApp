@@ -22,7 +22,7 @@ public class MongoListingData : IListingData
             var results = await _listings.FindAsync(l => l.Archived == false);
             output = results.ToList();
 
-            _cache.Set(CacheName, output, TimeSpan.FromMinutes(60));
+            _cache.Set(CacheName, output, TimeSpan.FromMinutes(5));
         }
 
         return output;
@@ -48,7 +48,7 @@ public class MongoListingData : IListingData
         {
             var result = await _listings.FindAsync(l => l.Id == id);
             output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(60));
+            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
         }
 
         return output;
@@ -62,7 +62,7 @@ public class MongoListingData : IListingData
         {
             var result = await _listings.FindAsync(l => l.Token == token);
             output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(60));
+            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
         }
 
         return output;

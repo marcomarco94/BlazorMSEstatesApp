@@ -21,7 +21,7 @@ public class MongoCompanyData : ICompanyData
         {
             var result = await _company.FindAsync(_ => true);
             output = result.FirstOrDefault();
-            _cache.Set(CacheName, output, TimeSpan.FromDays(7));
+            _cache.Set(CacheName, output, TimeSpan.FromMinutes(5));
         }
 
         return output;

@@ -22,7 +22,7 @@ public class MongoLocationData : ILocationData
             var results = await _locations.FindAsync(_ => true);
             output = results.ToList();
             output = output.OrderBy(location => location.Location).ToList();
-            _cache.Set(CacheName, output, TimeSpan.FromDays(7));
+            _cache.Set(CacheName, output, TimeSpan.FromMinutes(5));
         }
 
         return output;

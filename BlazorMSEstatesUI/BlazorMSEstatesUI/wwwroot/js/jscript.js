@@ -5,18 +5,12 @@ if ($(window).width() < 992) {
         }, 300);
     });
 }
+document.addEventListener('click', function (event) {
+    if (document.querySelector('.navbar-toggler').className === 'navbar-toggler') {
+        document.querySelector('.navbar-toggler').click();
+    }
+});
 
-function navbarToggler() {
-    document.addEventListener('click', function (event) {
-        if (document.querySelector('.navbar-toggler').className === 'navbar-toggler') {
-            document.querySelector('.navbar-toggler').click();
-        }
-    });
-}
-
-function scrollToTop() {
-    window.scrollTo(0, 0);
-}
 
 function counter() {
     var oTop;
@@ -45,7 +39,6 @@ function counter() {
     }
 }
 
-//navbar add class
 $(window).scroll(function () {
     counter();
 

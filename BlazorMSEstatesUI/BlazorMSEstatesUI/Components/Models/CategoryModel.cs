@@ -1,4 +1,4 @@
-namespace BlazorMSEstatesUI.Client.Models;
+namespace BlazorMSEstatesUI.Components.Models;
 
 public class CategoryModel
 { 

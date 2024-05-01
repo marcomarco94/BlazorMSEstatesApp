@@ -11,7 +11,7 @@ public static class RegisterServices
         builder.Services.AddMemoryCache();
         builder.Services.AddResponseCompression(options => { options.EnableForHttps = true; });
         
-        builder.Services.AddScoped(sp => new HttpClient
+        builder.Services.AddSingleton(sp => new HttpClient
         {
             BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiUrl")),
             DefaultRequestHeaders =
@@ -19,9 +19,10 @@ public static class RegisterServices
                 { "Origin", "https://as-ms-estates-webapp.azurewebsites.net" }
             }
         });
-    
-        builder.Services.AddSingleton<StateService>();
+        
+        builder.Services.AddHostedService<CacheBackgroundSerivce>();
         builder.Services.AddScoped<FilterService>();
-        builder.Services.AddScoped<ApiService>();
+        builder.Services.AddSingleton<ApiService>();
+        builder.Services.AddSingleton<CacheService>(); 
     }
 }

@@ -1,7 +1,6 @@
 ﻿@page "/contact"
 @inject ApiService ApiService
 @inject HttpClient Http
-@inject IJSRuntime JsRuntime
 
 <PageTitle>Contact</PageTitle>
 
@@ -101,12 +100,6 @@
     [SupplyParameterFromForm]
     private RealtorContactModel _realtorContactForm { get; set; } = new();
     
-    protected override void OnInitialized()
-    {
-        JsRuntime.InvokeVoidAsync("scrollToTop");
-    }
-    
-
     protected override async Task OnInitializedAsync()
     {
             _company = await ApiService.GetCompany();

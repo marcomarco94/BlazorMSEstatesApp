@@ -3,8 +3,6 @@
 @inject FilterService FilterService
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JsRuntime
-@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
@@ -89,11 +87,6 @@
 @code {
 
     private List<CategoryModel>? _categories;
-    
-    protected override void OnInitialized()
-    {
-        JsRuntime.InvokeVoidAsync("scrollToTop");
-    }
     
     protected override async Task OnInitializedAsync()
     {

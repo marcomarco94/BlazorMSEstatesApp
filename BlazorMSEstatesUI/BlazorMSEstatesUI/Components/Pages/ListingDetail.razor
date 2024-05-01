@@ -1,6 +1,5 @@
 ﻿@inject ApiService ApiService
 @inject HttpClient Http
-@inject IJSRuntime JsRuntime
 @page "/listing-detail/{Id}"
 <PageTitle>Listing Detail</PageTitle>
 
@@ -67,13 +66,17 @@
                 <div id="carouselListing" class="carousel slide carousel-fade" data-mdb-ride="carousel">
                     <div class="carousel-inner mb-5 strong rounded-3">
                         <div class="carousel-item active">
-                            <img src="@_listing?.ImageUrls.FirstOrDefault()" class="d-block w-100" alt="Main picture of the advertised house"/>
+                            <a href="@_listing?.ImageUrlsOrg.FirstOrDefault()" data-fancybox="gallery">
+                                <img src="@_listing?.ImageUrlsOrg.FirstOrDefault()" class="d-block w-100" alt="Main picture of the advertised house"/>
+                            </a>
                         </div>
-                        @foreach (var image in _listing?.ImageUrls.Skip(1))
+                        @foreach (var image in _listing?.ImageUrlsOrg.Skip(1))
                         {
-                            <div class="carousel-item">
+                        <div class="carousel-item">
+                            <a href="@image" data-fancybox="gallery">
                                 <img src="@image" class="d-block w-100" alt="Picture of the advertised house"/>
-                            </div>
+                            </a>
+                        </div>
                         }
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselListing" data-bs-slide="prev">
@@ -164,12 +167,11 @@
 
 @code {
     [Parameter] public string? Id { get; set; }
-    
+
     private ListingModel? _listing;
     private CompanyModel? _company;
 
-    [SupplyParameterFromForm]
-    private RealtorContactModel? _realtorContactForm { get; set; } = new();
+    [SupplyParameterFromForm] private RealtorContactModel? _realtorContactForm { get; set; } = new();
 
     string _submitButton = "Send Message";
 
@@ -196,4 +198,5 @@
         _realtorContactForm = new RealtorContactModel();
         return _submitButton;
     }
+
 }

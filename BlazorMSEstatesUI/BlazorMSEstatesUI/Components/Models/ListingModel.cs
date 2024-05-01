@@ -1,4 +1,4 @@
-namespace BlazorMSEstatesUI.Client.Models;
+namespace BlazorMSEstatesUI.Components.Models;
 
 public class ListingModel
 {
@@ -17,5 +17,6 @@ public class ListingModel
     public AdvertisementTypeModel? AdvertisementType { get; set; }
     public List<string>? Features { get; set; } = new();
     public List<string> ImageUrls { get; set; } = new();
+    public List<string> ImageUrlsOrg { get; set; } = new();
     public bool? Archived { get; set; }
 }
