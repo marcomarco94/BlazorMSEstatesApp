@@ -85,10 +85,28 @@
     <_ContentIncludedByDefault Remove="wwwroot\img\bg-img\team3.jpg" />
     <_ContentIncludedByDefault Remove="wwwroot\img\style.css" />
     <_ContentIncludedByDefault Remove="Pages\Authentication.razor" />
+    <_ContentIncludedByDefault Remove="wwwroot\app.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\style.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\favicon.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\about-us\customer-centric.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\about-us\experience.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\about-us\us1.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\about\about-header.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\index\breadcrump.jpeg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\index\main.jpeg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\logo-white.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\logo.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\portfolio\condominium.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\portfolio\house.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\portfolio\land.jpeg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\portfolio\villa.jpeg" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\boot.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\jscript.js" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Properties\serviceDependencies.local.json" />
     <None Remove="Properties\serviceDependencies.json" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\js\boot.js">
@@ -97,5 +115,12 @@
     <Content Update="wwwroot\js\jscript.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="wwwroot\**" />
   </ItemGroup>
 </Project>

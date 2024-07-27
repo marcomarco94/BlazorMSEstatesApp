@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34310.174
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMSEstatesUI", "BlazorMSEstatesUI\BlazorMSEstatesUI\BlazorMSEstatesUI.csproj", "{E14243D0-FDA7-4ACD-BD63-03674C7F96EF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSEstatesAppLibrary", "MSEstatesAppLibrary\MSEstatesAppLibrary.csproj", "{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSEstatesWebApi", "MSEstatesWebApi\MSEstatesWebApi.csproj", "{0AE3F3A7-92FF-4C5A-A2EA-880B79157E41}"
@@ -17,16 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMSEStatesUIAdmin", "B
 		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037} = {5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMSEstatesUI", "BlazorMSEstatesUI\BlazorMSEstatesUI.csproj", "{CFA763E1-18D4-44D3-9971-6283BA0002C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E14243D0-FDA7-4ACD-BD63-03674C7F96EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E14243D0-FDA7-4ACD-BD63-03674C7F96EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E14243D0-FDA7-4ACD-BD63-03674C7F96EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E14243D0-FDA7-4ACD-BD63-03674C7F96EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{86401839-6642-4933-A202-6F8A2469AF5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86401839-6642-4933-A202-6F8A2469AF5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86401839-6642-4933-A202-6F8A2469AF5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA763E1-18D4-44D3-9971-6283BA0002C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA763E1-18D4-44D3-9971-6283BA0002C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA763E1-18D4-44D3-9971-6283BA0002C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA763E1-18D4-44D3-9971-6283BA0002C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
