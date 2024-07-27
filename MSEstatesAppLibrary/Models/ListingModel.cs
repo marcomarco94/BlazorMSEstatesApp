@@ -1,5 +1,4 @@
 namespace MSEstatesAppLibrary.Models;
-
 public class ListingModel
 {
     [BsonId]
@@ -18,6 +17,6 @@ public class ListingModel
     public LocationModel? Location { get; set; }
     public CategoryModel? Category { get; set; }
     public AdvertisementTypeModel? AdvertisementType { get; set; }
-    public List<string>? ImageUrls { get; set; }
+    public List<string?>? ImageUrls { get; set; }
     public bool Archived { get; set; } = false;
 }

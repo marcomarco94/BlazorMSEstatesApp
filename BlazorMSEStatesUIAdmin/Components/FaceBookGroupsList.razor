@@ -1,0 +1,93 @@
+@using MSEstatesAppLibrary.Models
+@inject  HttpClient Http
+
+<FluentStack
+    Orientation="Orientation.Vertical">
+
+    <FluentIcon Value="@(new Icons.Regular.Size28.ArrowClockwise())" IconColor="Color.Accent" OnClick="RefreshGroups"></FluentIcon>
+
+    @if (_groups != null)
+    {
+        <FluentListbox
+            Height="400px"
+            Width="100%"
+            Items="@_groups"
+            OptionText="@(t => t.Id)"
+            @bind-SelectedOption="@SelectedGroup"
+            @bind-SelectedOption:after="OnSelectedGroupChanged">
+            <OptionTemplate>
+                <FluentIcon Icon="Icons.Regular.Size16.Delete" Slot="end" OnClick="@(() => OnGroupDeleteClicked(context.Id))"/>
+                @context.GroupName
+            </OptionTemplate>
+        </FluentListbox>
+    <FluentTextField Placeholder="Group name" Style="width: 100%" Required="true"  @bind-Value="_newGroupName"></FluentTextField>
+    <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddGroupClicked">Add Group</FluentButton>
+    }
+    else
+    {
+    <p>Please wait a moment. Loading...</p>
+    }
+</FluentStack>
+
+@code
+{
+    [Parameter] public FacebookGroupModel? SelectedGroup { get; set; }
+    [Parameter] public EventCallback<FacebookGroupModel> SelectedGroupChanged { get; set; }
+
+
+    private List<FacebookGroupModel>? _groups;
+    private string? _newGroupName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshGroups();
+    }
+
+    private async Task RefreshGroups()
+    {
+        _groups = await Http.GetFromJsonAsync<List<FacebookGroupModel>>("api/FacebookGroup");
+    }
+
+    private async Task OnAddGroupClicked()
+    {
+        if (string.IsNullOrWhiteSpace(_newGroupName))
+        {
+            return;
+        }
+
+        var newGroup = new FacebookGroupModel
+        {
+            GroupName = _newGroupName,
+        };
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/FacebookGroup/CreateFacebookGroup", newGroup);
+            response.EnsureSuccessStatusCode();
+            await RefreshGroups();
+            _newGroupName = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task OnSelectedGroupChanged()
+    {
+        await SelectedGroupChanged.InvokeAsync(SelectedGroup);
+    }
+
+    private async Task OnGroupDeleteClicked(string? groupId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/FacebookGroup/DeleteGroup/{groupId}");
+            response.EnsureSuccessStatusCode();
+            await RefreshGroups();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

@@ -1,0 +1,305 @@
+﻿@page "/listings"
+@using System.Text.RegularExpressions
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ImageService ImageService
+@inject IJSRuntime JS
+
+<PageTitle>Listings</PageTitle>
+
+<FluentHeader Style="margin: 0 0 15px 0">Listings</FluentHeader>
+
+<FluentGrid Spacing="2">
+    <FluentGridItem xs="12" lg="4">
+        <ListingsList
+            @bind-SelectedListing:get="_selectedListing" 
+            @bind-SelectedListing:set="OnSelectedListingChanged" />
+    </FluentGridItem>
+    <FluentGridItem xs="12" lg="8">
+        @if (_selectedListing != null)
+        {
+            <FluentToolbar>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="NavigateToEditPictures">Edit Images</FluentButton>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="NavigateToFaceBookPost">Edit FacebookPost</FluentButton>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="DownloadImagesAsync">Download Images</FluentButton>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="OnMarketPlaceClicked">Post to Marketplace</FluentButton>
+            </FluentToolbar>
+            <p/>
+            <FluentEditForm Model="@_selectedListing" OnValidSubmit="UpdateListingAsync" FormName="UpdateEntry">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="10">
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Token</FluentLabel>
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" Value="@_updatedToken" ReadOnly="true"/>
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Name</FluentLabel>
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.ListingName" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Short description</FluentLabel>
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.ShortDescription" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Description</FluentLabel>
+                        <div style="width: 85%; font-size: 1.2em">
+                            <FluentTextArea Style="width: 100%" Rows="12" Resize="TextAreaResize.Vertical" @bind-Value="@_selectedListing.Description">
+                            </FluentTextArea>
+                        </div>
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Bedrooms</FluentLabel>
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.Bedrooms" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Bathrooms</FluentLabel>
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.Bathrooms" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Size</FluentLabel>
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.Size" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Price</FluentLabel>
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.Price" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 30%; font-size: 1.2em">Features</FluentLabel>
+                        <FluentSortableList Style="width: 70%; font-size: 1.2em"
+                                            Items="_selectedListing.Features"
+                                            OnUpdate="@SortList">
+                            <ItemTemplate Context="feature">@feature
+                                <FluentIcon OnClick="() => DeleteFeatureOnClick(feature)" Value="@(new Icons.Regular.Size20.Delete())" />
+                            </ItemTemplate>
+                        </FluentSortableList>
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentTextField Placeholder="New Feature" Style="width: 100%; font-size:1.2em" @bind-Value="_newFeature" ></FluentTextField>
+                            <FluentButton Style="width: 100%; font-size:1.2em" Appearance="Appearance.Accent" OnClick="AddFeatureOnClick">Add Feature</FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Location</FluentLabel>
+                        <FluentSelect Style="width: 85%; font-size: 1.2em"
+                                      @bind-Value="@_selectedListing.Location.Location"
+                                      @bind-SelectedOption="_selectedLocation"
+                                      @bind-SelectedOption:after="@GenerateListingToken"
+                                      Items="_locations"
+                                      OptionText="@(l=> l.Location)" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Category</FluentLabel>
+                        <FluentSelect Style="width: 85%; font-size: 1.2em"
+                                      @bind-Value="@_selectedListing.Category.Category"
+                                      @bind-SelectedOption="_selectedCategory"
+                                      @bind-SelectedOption:after="@GenerateListingToken"
+                                      Items="_categories"
+                                      OptionText="@(l=> l.Category)" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Adverstisement Type</FluentLabel>
+                        <FluentSelect Style="width: 85%; font-size: 1.2em"
+                                      @bind-Value="@_selectedListing.AdvertisementType.AdvertisementType"
+                                      @bind-SelectedOption="_selectedAdvertisementType"
+                                      @bind-SelectedOption:after="@GenerateListingToken"
+                                      Items="_advertisementTypes"
+                                      OptionText="@(l=> l.AdvertisementType)" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Archived</FluentLabel>
+                        <FluentCheckbox Style="width: 85%; font-size: 1.2em" @bind-Value="@_selectedListing.Archived" />
+                    </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal">
+                        <FluentLabel Style="width: 15%; font-size: 1.2em">Images Count</FluentLabel>
+                        <FluentLabel Style="width: 85%; font-size: 1.2em">@_selectedListing.ImageUrls.Count.ToString() </FluentLabel>
+                    </FluentStack>
+                    <FluentSelect Style="width: 100%; font-size: 1.2em" Items="_selectMode" @bind-Value="_selectedMode" @bind-Value:after="@GenerateListingToken"></FluentSelect>
+                    <FluentButton Style="width: 100%; font-size: 1.2em" Appearance="Appearance.Accent" Type="ButtonType.Submit">@_selectedMode Listing</FluentButton>
+                </FluentStack>
+            </FluentEditForm>
+        }
+    </FluentGridItem>
+</FluentGrid>
+
+
+@* <script> *@
+@*     window.triggerFileDownload = (fileName, url) => { *@
+@*         const anchorElement = document.createElement('a'); *@
+@*         anchorElement.href = url; *@
+@*         anchorElement.download = fileName ?? ''; *@
+@*         anchorElement.click(); *@
+@*         anchorElement.remove(); *@
+@*     } *@
+@* </script> *@
+
+@code {
+    private ListingModel? _selectedListing;
+    private List<LocationModel>? _locations;
+    private LocationModel? _selectedLocation;
+    private List<AdvertisementTypeModel>? _advertisementTypes;
+    private AdvertisementTypeModel? _selectedAdvertisementType;
+    private List<CategoryModel>? _categories;
+    private CategoryModel? _selectedCategory;
+    private string? _newFeature;
+    private string? _updatedToken;
+
+    private List<string> _selectMode = new List<string> { "Update", "Create" };
+    private string _selectedMode = "Update";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAdditionalProperties();
+    }
+
+    private async Task GetAdditionalProperties()
+    {
+        try
+        {
+            _locations = await Http.GetFromJsonAsync<List<LocationModel>>("api/Location");
+            _advertisementTypes = await Http.GetFromJsonAsync<List<AdvertisementTypeModel>>("api/AdvertisementType");
+            _categories = await Http.GetFromJsonAsync<List<CategoryModel>>("api/Category");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void SortList(FluentSortableListEventArgs args)
+    {
+        if (args is null || args.OldIndex == args.NewIndex)
+        {
+            return;
+        }
+
+        var oldIndex = args.OldIndex;
+        var newIndex = args.NewIndex;
+
+        var items = _selectedListing.Features;
+        var itemToMove = items[oldIndex];
+        items.RemoveAt(oldIndex);
+
+        if (newIndex < items.Count)
+        {
+            items.Insert(newIndex, itemToMove);
+        }
+        else
+        {
+            items.Add(itemToMove);
+        }
+    }
+
+    private void OnSelectedListingChanged(ListingModel listing)
+    {
+        _selectedListing = listing;
+        _selectedCategory = _categories?.FirstOrDefault(c => c.Category == _selectedListing.Category.Category);
+        _selectedAdvertisementType = _advertisementTypes?.FirstOrDefault(a => a.AdvertisementType == _selectedListing.AdvertisementType.AdvertisementType);
+        _selectedLocation = _locations?.FirstOrDefault(l => l.Location == _selectedListing.Location.Location);
+        StateHasChanged();
+        GenerateListingToken();
+    }
+
+    private void AddFeatureOnClick()
+    {
+        if (_newFeature == null) return;
+        _selectedListing?.Features?.Add(_newFeature);
+        _newFeature = string.Empty;
+    }
+
+    private void DeleteFeatureOnClick(string feature)
+    {
+        if (feature == String.Empty) return;
+        _selectedListing?.Features?.Remove(feature);
+
+    }
+
+
+    private void GenerateListingToken()
+    {
+        if (_selectedListing == null) return;
+        var token = _selectedCategory?.Acronym +
+                        _selectedAdvertisementType?.Acronym +
+                        _selectedLocation?.Acronym;
+        if (_selectedMode == "Update")
+        {
+            var sequenceNuber = Regex.Match(_selectedListing?.Token, @"\d+").Value;
+            _updatedToken = token + sequenceNuber;
+        }
+        else
+        {
+            _updatedToken = token + "XXXX";
+        }
+
+    }
+
+    private async Task DownloadImagesAsync()
+    {
+        if (_selectedListing == null)
+        {
+            return;
+        }
+
+        foreach (var imageUrl in _selectedListing.ImageUrls)
+        {
+            var fileName = _selectedListing.Token + imageUrl;
+            var fileURL = ImageService.GetFullImagePathHq(imageUrl);
+            try
+            {
+                await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to download image {imageUrl}: {ex.Message}");
+            }
+            await Task.Delay(1000);
+        }
+    }
+    
+    private async Task OnMarketPlaceClicked()
+    {
+        try
+        {
+            await Http.PostAsJsonAsync("api/FacebookPost/CreateMarketPlacePost", _selectedListing);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void UpdateListingAsync()
+    {
+        var test = _selectedListing;
+        try
+        {
+            if (_selectedMode == "Update")
+            {
+                Http.PostAsJsonAsync("api/Listing/UpdateListing", _selectedListing);
+            }
+            else
+            {
+                _selectedListing.Token = _updatedToken;
+                Http.PostAsJsonAsync("api/Listing/CreateListing", _selectedListing);
+            }
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        StateHasChanged();
+    }
+
+    private void NavigateToEditPictures()
+    {
+        NavigationManager.NavigateTo($"/edit-pictures/{_selectedListing?.Id}");
+    }
+
+    private void NavigateToFaceBookPost()
+    {
+        NavigationManager.NavigateTo($"/facebook-post/{_selectedListing?.Id}");
+    }
+}

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Models;
+using MSEstatesAppLibrary.Services;
+using MSEstatesAppLibrary.Services.MarketPlace;
 
 namespace MSEstatesWebApi.Controllers;
 
@@ -10,27 +12,46 @@ namespace MSEstatesWebApi.Controllers;
 [Route("api/[controller]")]
 public class FacebookPostController : Controller
 {
-    private readonly IFacebookData _facebookData;
+    private readonly IFacebookPostData _facebookPostData;
+    private readonly IFacebookGroupData _facebookGroupData;
+    private readonly FacebookPostingService _facebookPostingService;
+    private readonly MarketPlacePostingService _marketPlacePostingService;
 
-    public FacebookPostController(IFacebookData facebookData)
+
+    public FacebookPostController(IFacebookPostData facebookPostData, FacebookPostingService facebookPostingService,
+        MarketPlacePostingService marketPlacePostingService, IFacebookGroupData facebookGroupData)
     {
-        _facebookData = facebookData;
+        _facebookPostData = facebookPostData;
+        _facebookGroupData = facebookGroupData;
+        _facebookPostingService = facebookPostingService;
+        _marketPlacePostingService = marketPlacePostingService;
+    }
+
+    [Authorize] 
+    [RequiredScope("Files.ReadWrite")]
+    [HttpPost]
+    [Route("CreateFacebookPost")]
+    public async Task CreateFacebookPost(FacebookPostModel facebookPost)
+    {
+        await _facebookPostingService.CreateFacebookPost(facebookPost);
     }
     
-    [Authorize(Roles = "Task.Write")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpGet(Name = "GetFacebookPosts")]
     public async Task<List<FacebookPostModel>> GetFacebookPosts()
     {
-        var listings = await _facebookData.GetAllFacebookPosts();
-        return listings.ToList();
+        var posts = await _facebookPostData.GetAllFacebookPosts();
+        return posts.ToList();
     }
     
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
-    [Route("CreateFacebookPost")]
-    public async Task CreatePost(FacebookPostModel facebookPost)
-    {
-         await _facebookData.CreateFacebookPost(facebookPost);
+    [Route("CreateMarketPlacePost")]
+    public async Task CreateMarketPlacePost(FacebookPostModel facebookPost)
+    { 
+        var facebookGroups = await _facebookGroupData.GetAllGroups();
+        await _marketPlacePostingService.PublishListing(facebookPost, facebookGroups)!;
     }
 }

@@ -6,8 +6,9 @@
 <HeadContent>
     <meta name="description" content="Details about a specific property listing by MS Estates in Phuket. Explore the features and investment potential.">
     <meta name="keywords" content="Phuket property details, MS Estates listing details, Investment potential">
-    <meta property="og:title" content="Details about a Property Listing by MS Estates in Phuket">
-    <meta property="og:description" content="Explore details about a specific property listing by MS Estates in Phuket. Discover the features and investment potential.">
+    <meta property="og:title" content="@_listing.ListingName">
+    <meta property="og:description" content="@_listing.ShortDescription">
+    <meta property="og:image" content="@_listing.ImageUrls[0]">
 </HeadContent>
 
 @if (_listing is not null)

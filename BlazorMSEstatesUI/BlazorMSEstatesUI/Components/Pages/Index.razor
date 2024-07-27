@@ -1,8 +1,6 @@
 ﻿@page "/"
 @using BlazorMSEstatesUI.Components.Layout
-@inject FilterService FilterService
 @inject ApiService ApiService
-@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
@@ -51,12 +49,14 @@
                 @foreach (var c in _categories)
                 {
                     <div class="col-md-3 col-sm-6 col-xs-6 mb-3">
-                        <div class="img-thumbnail" @onclick="() => OpenCategory(c.Category)">
+                        <NavLink class="nav-link"  href="@GetRoute(c.Category)" data-enhance-nav="false">
+                        <div class="img-thumbnail">
                             <img class="img-fluid" src="@c.Image" alt="Listing Category @c.Category">
                             <h4>
                                 @c.Category
                             </h4>
                         </div>
+                        </NavLink>
                     </div>
                 }
             }
@@ -93,10 +93,10 @@
         _categories = await ApiService.GetCategories();
     }
 
-    private void OpenCategory(string category)
+    private string GetRoute(string category)
     {
-        FilterService.SelectedCategory = category;
-        NavigationManager.NavigateTo("/listings/");
+        string categoryFormatted = category.Substring(0, 1).ToUpper() + category.Substring(1);
+        return $"/listings?searchInput=&minPrice=&maxPrice=&category={categoryFormatted}&location=Location&selectedAdvertisement=All";
     }
 
 }

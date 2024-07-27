@@ -1,0 +1,50 @@
+﻿@page "/facebook-groups"
+@using MSEstatesAppLibrary.Models
+@inject  HttpClient Http
+
+<PageTitle>Facebook Groups</PageTitle>
+
+<FluentHeader Style="margin: 0 0 15px 0">Facebook Groups</FluentHeader>
+
+<FluentGrid>
+      <FluentGridItem xs="12" sm="12">
+        <FaceBookGroupsList
+            @bind-SelectedGroup="_group">
+        </FaceBookGroupsList>
+    </FluentGridItem>
+    <FluentGridItem xs="12" sm="8">
+
+        @if (_group != null)
+        {
+            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                @bind-Value="@_group.GroupName">
+            </FluentTextArea>
+            <p/>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnUpdateClicked">Update @_group.GroupName</FluentButton>
+        }
+    </FluentGridItem> 
+</FluentGrid>
+
+
+@code
+{
+    private FacebookGroupModel? _group;
+    
+    private async Task OnUpdateClicked()
+    {
+        if (_group == null)
+        {
+            return;
+        }
+        try
+        {
+        await Http.PostAsJsonAsync("api/FacebookGroup/UpdateGroup", _group);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+}

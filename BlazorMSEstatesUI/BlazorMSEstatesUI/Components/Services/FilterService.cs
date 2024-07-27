@@ -188,7 +188,7 @@ public class FilterService
                 bool canParse =  int.TryParse(MinPriceInput, out var minPrice);
                 if (canParse && minPrice > 0)
                 {
-                    filteredListings = filteredListings.Where(l => l.Price <= minPrice).ToList();
+                    filteredListings = filteredListings.Where(l => l.Price >= minPrice).ToList();
                 }
             }
 

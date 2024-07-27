@@ -1,0 +1,52 @@
+﻿@page "/facebook-templates"
+@using MSEstatesAppLibrary.Models
+@inject  HttpClient Http
+
+<PageTitle>Facebook Templates</PageTitle>
+
+<FluentHeader Style="margin: 0 0 15px 0">Facebook Templates</FluentHeader>
+
+<FluentGrid>
+      <FluentGridItem xs="12" sm="4">
+        <FaceBookTemplatesList
+            @bind-SelectedTemplate="_template">
+        </FaceBookTemplatesList>
+    </FluentGridItem>
+    <FluentGridItem xs="12" sm="8">
+
+        @if (_template != null)
+        {
+            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                @bind-Value="@_template.Template">
+            </FluentTextArea>
+            <p/>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnUpdateClicked">Update @_template.Name</FluentButton>
+        }
+
+
+    </FluentGridItem> 
+</FluentGrid>
+
+
+@code
+{
+    private FacebookTemplateModel? _template;
+    
+    private async Task OnUpdateClicked()
+    {
+        if (_template == null)
+        {
+            return;
+        }
+        try
+        {
+        await Http.PostAsJsonAsync("api/FacebookTemplate/UpdateTemplate", _template);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+}

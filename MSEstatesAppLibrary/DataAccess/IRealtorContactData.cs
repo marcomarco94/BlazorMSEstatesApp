@@ -1,3 +1,5 @@
+using MSEstatesAppLibrary.Models;
+
 namespace MSEstatesAppLibrary.DataAccess;
 
 public interface IRealtorContactData

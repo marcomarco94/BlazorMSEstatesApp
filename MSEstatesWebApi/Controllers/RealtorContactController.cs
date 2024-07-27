@@ -24,8 +24,8 @@ public class RealtorContactController : Controller
         if (ModelState.IsValid) await _realtorContactData.CreateRealtorContact(realtorContact);
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpGet(Name = "GetRealtorContacts")]
     [ResponseCache(Duration = 5 * 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<List<RealtorContactModel>> Get()
@@ -34,8 +34,8 @@ public class RealtorContactController : Controller
         return realtorContacts;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpGet("{id}", Name = "GetRealtorContactById")]
     [ResponseCache(Duration = 5 * 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<RealtorContactModel>> Get(string id)
@@ -44,8 +44,8 @@ public class RealtorContactController : Controller
         return realtorContact;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPut]
     [Route("ArchiveRealtorContact/{id}")]
     public async Task<IActionResult> Put(string id)

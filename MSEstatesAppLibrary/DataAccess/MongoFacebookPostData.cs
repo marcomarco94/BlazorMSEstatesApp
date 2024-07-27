@@ -1,10 +1,12 @@
+using MSEstatesAppLibrary.Models;
+
 namespace MSEstatesAppLibrary.DataAccess;
 
-public class MongoFacebookData : IFacebookData
+public class MongoFacebookPostData : IFacebookPostData
 {
     private readonly IMongoCollection<FacebookPostModel> _facebookPosts;
     
-    public MongoFacebookData(IDbConnection db)
+    public MongoFacebookPostData(IDbConnection db)
     {
         _facebookPosts = db.FacebookPostCollection;
     }

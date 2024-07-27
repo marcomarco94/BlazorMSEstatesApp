@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using MarketPlaceHelper.Services;
 using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Models;
 
@@ -11,21 +12,29 @@ namespace MSEstatesWebApi.Controllers;
 public class ListingController : Controller
 {
     private readonly IListingData _listingData;
+    private readonly ListingService _listingService;
 
-    public ListingController(IListingData listingData)
+    public ListingController(IListingData listingData, ListingService listingService)
     {
         _listingData = listingData;
+        _listingService = listingService;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateListing")]
-    public async Task AddListing(ListingModel listing)
+    public async Task<ActionResult<ListingModel>> AddListing(ListingModel listing)
     {
-        if (ModelState.IsValid) await _listingData.CreateListing(listing);
+        if (ModelState.IsValid)
+        {
+            listing.ImageUrls?.Clear();
+            var newListing = await _listingData.CreateListing(listing);
+            return Ok(newListing);
+        }
+        return BadRequest(ModelState);
     }
-    
+
     [HttpGet(Name = "GetListings")]
     [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<List<ListingModel>> GetListings()
@@ -33,25 +42,26 @@ public class ListingController : Controller
         var listings = await _listingData.GetAllListings();
         return listings.OrderByDescending(l => l.DateCreated).ToList();
     }
-    
-     [Authorize(Roles = "Task.Write")]
-     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-     [HttpGet]
-     [Route("NoCache")]
-     public async Task<List<ListingModel>> GetListingsNoCache()
-     {
-         var listings = await _listingData.NoCache();
-         return listings;
-     }
 
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
+    [HttpGet]
+    [Route("NoCache")]
+    public async Task<List<ListingModel>> GetListingsNoCache()
+    {
+        var listings = await _listingData.NoCache();
+        return listings;
+    }
+
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpGet("{id}", Name = "GetListingById")]
-    [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Any, NoStore = false)]
-    public async Task<ActionResult<ListingModel>> Get(string id)
+    public async Task<ActionResult<ListingModel>> Get(string? id)
     {
         var listing = await _listingData.GetListingById(id);
         return listing;
     }
-    
+
     [HttpGet("GetByToken{token}", Name = "GetListingByToken")]
     [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ListingModel>> GetByToken(string token)
@@ -60,23 +70,55 @@ public class ListingController : Controller
         return listing;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-    [HttpPut]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
+    [HttpPost]
     [Route("UpdateListing")]
     public async Task<IActionResult> Update([FromBody] ListingModel? updatedListing)
     {
         if (updatedListing == null) return BadRequest();
-
+        var oldListing = await _listingData.GetListingById(updatedListing.Id);
+        await _listingService.UpdateImagesOnCloud(oldListing.ImageUrls, updatedListing.ImageUrls);
+        
         await _listingData.UpdateListing(updatedListing);
         return NoContent();
     }
-    
-    [HttpGet]
-    [Route("GetCount")]
-    public async Task <long> GetCount()
+
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
+    [HttpGet ("GetCount")]
+    public async Task<long> GetCount()
     {
         var count = await _listingData.GetTotalListingsCount();
         return count;
+    }
+
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
+    [HttpPost]
+    [Route("UploadImage")]
+    public async Task<IActionResult> UploadImage()
+    {
+        var formCollection = await Request.ReadFormAsync();
+        string? listingId = formCollection["listingId"].FirstOrDefault();
+        var files = formCollection.Files;
+
+        if (files.Count == 0 || listingId == null) return BadRequest(new { message = "No files uploaded" });
+
+        var listing = await _listingData.GetListingById(listingId);
+        foreach (var file in files)
+        {
+            if (file.Length <= 0) continue;
+            await using var stream = file.OpenReadStream();
+            string? imageUrl = await _listingService.ProcessAndUploadImage(stream);
+            if (imageUrl != null)
+            {
+                listing.ImageUrls?.Add(imageUrl);
+                await _listingData.UpdateListing(listing);
+
+            }
+        }
+
+        return Ok(new { message = "Upload successed" });
     }
 }

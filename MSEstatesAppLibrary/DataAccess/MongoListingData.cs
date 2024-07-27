@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using MSEstatesAppLibrary.Models;
 
 namespace MSEstatesAppLibrary.DataAccess;
 
@@ -34,23 +35,20 @@ public class MongoListingData : IListingData
             return results.ToList(); 
     }
 
-    public async Task CreateListing(ListingModel listing)
+    public async Task<ListingModel> CreateListing(ListingModel listing)
     {
         listing.Id = null;
+        var count = await GetTotalListingsCount() + 1301;
+        var newToken = listing.Token?.Replace("XXXX", count.ToString());
+        listing.Token = newToken;
         await _listings.InsertOneAsync(listing);
+        return listing;
     }
 
-    public async Task<ListingModel> GetListingById(string id)
+    public async Task<ListingModel> GetListingById(string? id)
     {
-        var cacheKey = $"{CacheName}:{id}";
-        var output = _cache.Get<ListingModel>(cacheKey);
-        if (output is null)
-        {
-            var result = await _listings.FindAsync(l => l.Id == id);
-            output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
-        }
-
+        var result = await _listings.FindAsync(l => l.Id == id);
+        var output = result.FirstOrDefault();
         return output;
     }
     

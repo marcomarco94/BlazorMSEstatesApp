@@ -1,0 +1,102 @@
+﻿@page "/facebook-post/{Id}"
+@using MSEstatesAppLibrary.Models
+@inject HttpClient Http
+@inject IDialogService DialogService
+
+<PageTitle>Facebook Post</PageTitle>
+
+<FluentHeader Style="margin: 0 0 15px 0">Facebook Post</FluentHeader>
+
+ <FluentGrid>
+    <FluentGridItem xs="12" sm="4">
+        <FaceBookTemplatesList
+            @bind-SelectedTemplate:get="_template"
+            @bind-SelectedTemplate:set="OnTemplateSet">
+        </FaceBookTemplatesList>
+    </FluentGridItem>
+    
+    <FluentGridItem xs="12" sm="8">
+        @if (_filledTemplate != null)
+        {
+            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                @bind-Value="@_filledTemplate.Template">
+            </FluentTextArea>
+            <p/>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="PostToFacebookPake">Post to FB</FluentButton>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="PostToMarketPlace">Post to Marketplace</FluentButton>
+        }
+    </FluentGridItem> 
+</FluentGrid>
+
+@code
+{
+    [Parameter] public string? Id { get; set; }
+    private FacebookTemplateModel? _template;
+    private FacebookTemplateModel? _filledTemplate;
+
+    private readonly DialogParameters _parameters = new()
+    { 
+        Title = "Info!",
+        Width = "500px",
+        Height = "200px",
+        TrapFocus = true,
+        Modal = true,
+        PreventScroll = true
+    };
+    
+    private async Task OnTemplateSet(FacebookTemplateModel template)
+    {
+        _template = template;
+        if (_template != null)
+        {
+            try
+            {
+                _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplate/GetFilledTemplate/{_template.Id}/{Id}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+    }
+    
+    
+    private async Task PostToFacebookPake()
+    {
+        await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
+        FacebookPostModel post = new FacebookPostModel
+        {
+            Template = _filledTemplate,
+            ListingId = Id
+        };
+        try
+        {
+            await Http.PostAsJsonAsync("api/FacebookPost/CreateFacebookPost", post);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    private async Task PostToMarketPlace()
+    {
+        await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
+        FacebookPostModel post = new FacebookPostModel
+        {
+            Template = _filledTemplate,
+            ListingId = Id
+        };
+        try
+        {
+            await Http.PostAsJsonAsync("api/FacebookPost/CreateMarketPlacePost", post);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+}

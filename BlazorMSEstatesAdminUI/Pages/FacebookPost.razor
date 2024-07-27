@@ -1,0 +1,74 @@
+﻿@page "/facebook-post/{Id}"
+@using Amazon.Runtime.SharedInterfaces
+@inject HttpClient Http
+@inject ImageService ImageService
+
+<PageTitle>Facebook Post</PageTitle>
+
+<FluentHeader Style="margin: 0 0 15px 0">Facebook Post</FluentHeader>
+
+<FluentGrid>
+    <FluentGridItem xs="12" sm="4">
+        <FaceBookTemplatesList
+            @bind-SelectedTemplate:get="_template"
+            @bind-SelectedTemplate:set="OnTemplateSet">
+        </FaceBookTemplatesList>
+    </FluentGridItem>
+    
+    <FluentGridItem xs="12" sm="8">
+        @if (_filledTemplate != null)
+        {
+            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                @bind-Value="@_filledTemplate.Template">
+            </FluentTextArea>
+            <p/>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnPostClicked">Post to FB</FluentButton>
+        }
+
+
+    </FluentGridItem>
+</FluentGrid>
+
+@code
+{
+    [Parameter] public string? Id { get; set; }
+    private FacebookTemplateModel? _template;
+    private FacebookTemplateModel? _filledTemplate;
+
+    private async Task OnTemplateSet(FacebookTemplateModel template)
+    {
+        _template = template;
+        try
+        {
+            _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplate/GetFilledTemplate/{template.Id}/{Id}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    
+    private async Task OnPostClicked()
+    {
+        FacebookPostModel post = new FacebookPostModel
+        {
+            Template = _filledTemplate,
+            ListingId = Id
+        };
+        try
+        {
+            await Http.PostAsJsonAsync("api/FacebookPost/CreateFacebookPost", post);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+
+    
+}

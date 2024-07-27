@@ -16,9 +16,9 @@ public class CompanyController : Controller
     {
         _companyData = companyData;
     }
-
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateCompany")]
     public async Task CreateCompany(CompanyModel company)
@@ -26,9 +26,9 @@ public class CompanyController : Controller
         if (ModelState.IsValid) await _companyData.CreateCompany(company);
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-    [HttpPatch]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
+    [HttpPut]
     [Route("UpdateCompany")]
     public async Task<IActionResult> Update([FromBody] CompanyModel? updatetCompany)
     {

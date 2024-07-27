@@ -1,3 +1,5 @@
+using MSEstatesAppLibrary.Models;
+
 namespace MSEstatesAppLibrary.DataAccess;
 
 public interface IDbConnection
@@ -11,6 +13,7 @@ public interface IDbConnection
     string RealtorContactCollectionName { get; }
     string AdvertisementTypeCollectionName { get; }
     string FacebookPostCollectionName { get; }
+    string FacebookTemplateCollectionName { get; }
     MongoClient Client { get; }
     IMongoCollection<CategoryModel> CategoryCollection { get; }
     IMongoCollection<LocationModel> LocationCollection { get; }
@@ -20,4 +23,6 @@ public interface IDbConnection
     IMongoCollection<RealtorContactModel> RealtorContactCollection { get; }
     IMongoCollection<AdvertisementTypeModel> AdvertisementTypeCollection { get; }
     IMongoCollection<FacebookPostModel> FacebookPostCollection { get; }
+    IMongoCollection<FacebookTemplateModel> FacebookTemplateCollection { get; }
+    IMongoCollection<FacebookGroupModel> FacebookGroupCollection { get; }
 }

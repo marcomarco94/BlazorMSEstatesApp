@@ -8,7 +8,6 @@ public class ApiService
     private IConfiguration _config;
     private readonly HttpClient _http;
     private readonly string? _basePath;
-    private readonly IMemoryCache _cache;
     private readonly CacheService _cacheService;
 
     public ApiService(IConfiguration config, HttpClient http, CacheService cacheService)

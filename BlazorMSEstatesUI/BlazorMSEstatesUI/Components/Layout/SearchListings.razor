@@ -27,9 +27,9 @@
         <div class="row mb-3 mt-3 offset-md-3 offset-lg-3">
             <div class="col-sm-12 col-md-10 col-lg-8">
                 <div class="form-group">
-                    <input class="search-input form-control form-control-lg" id="search" type="text" placeholder="Search" aria-label="Search"
-                           @oninput="txt => OnSearchInput((string)txt.Value)"
-                           value="@FilterService.SearchInput"/>
+                    <InputText class="search-input form-control form-control-lg" id="search" type="text" placeholder="Search" aria-label="Search"
+                               @bind-Value="@FilterService.SearchInput">
+                    </InputText>
                 </div>
             </div>
         </div>
@@ -38,21 +38,20 @@
         <div class="row mb-3">
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="form-group">
-                    <input class="search-input form-control form frm-outline-light" id="min-price"
+                    <InputText class="search-input form-control" id="min-price"
                            pattern="[0-9]*" type="text" placeholder="Min Price (THB)" aria-label="Min Price (THB)" maxlength="9"
-                           @oninput="txt => OnMinPriceInput((string)txt.Value)"
-                           value="@FilterService.MinPriceInput"/>
+                               @bind-Value="@FilterService.MinPriceInput"/>
                 </div>
             </div>
 
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="form-group">
-                    <input class="search-input form-control" id="max-price" type="text" pattern="[0-9]*"
+                    <InputText class="search-input form-control" id="max-price" type="text" pattern="[0-9]*"
                            placeholder="Max Price (THB)" aria-label="Max Price (THB)" maxlength="9"
-                           @oninput="txt => OnMaxPriceInput((string)txt.Value)"
-                           value="@FilterService.MaxPriceInput"/>
+                               @bind-Value="@FilterService.MaxPriceInput"/>
                 </div>
             </div>
+            
 
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="form-group">
@@ -83,15 +82,12 @@
                     </select>
                 </div>
             </div>
-            @if (_currentUrl == "")
-            {
             <div class="vertical-align-center">
                 <div class="col-12 col-sm-12 col-md-4 col-xl-4 btn-group">
                     <button class="search-input btn btn btn-outline-light btn-block" @onclick="OnSearchClick">Search
                     </button>
                 </div>
             </div>
-            }
         </div>
     </div>
 </section>
@@ -153,10 +149,11 @@
         var uriBuilder = new UriBuilder(NavigationManager.Uri)
         {
             Path = "/listings",
-            Query = $"searchInput={FilterService.SearchInput}&minPrice={FilterService.MinPriceInput}&maxPrice={FilterService.MaxPriceInput}&category={FilterService.SelectedCategory}&location={FilterService.SelectedLocation}&selectedAdvertisement={FilterService.SelectedAdvertisement}"
+            Query = $"searchInput={FilterService.SearchInput}&minPrice={FilterService.MinPriceInput}&maxPrice={FilterService.MaxPriceInput}&category={FilterService.SelectedCategory}&location={FilterService.SelectedLocation}&selectedAdvertisement={FilterService.SelectedAdvertisement}&sortedBy={FilterService.SortedBy}"
         };
 
         NavigationManager.NavigateTo(uriBuilder.ToString(), false);
+        StateHasChanged();
     }
 
     private void OnCategoryChange(ChangeEventArgs e)
@@ -167,21 +164,5 @@
     private void OnLocationChange(ChangeEventArgs e)
     {
         FilterService.SelectedLocation = e.Value?.ToString() ?? null;
-    }
-
-    private void OnSearchInput(string? searchInput)
-    {
-        FilterService.SearchInput = searchInput;
-    }
-
-    private void  OnMinPriceInput(string? minPriceInput)
-    {
-        FilterService.MinPriceInput = minPriceInput;
-    }
-
-
-    private void OnMaxPriceInput(string? maxPriceInput)
-    {
-        FilterService.MaxPriceInput = maxPriceInput;
     }
 }

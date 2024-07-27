@@ -1,5 +1,6 @@
 ﻿using System.Security.Authentication;
 using Microsoft.Extensions.Configuration;
+using MSEstatesAppLibrary.Models;
 
 namespace MSEstatesAppLibrary.DataAccess;
 
@@ -34,6 +35,8 @@ public class DbConnection : IDbConnection
         AdvertisementTypeCollection = _db.GetCollection<AdvertisementTypeModel>(AdvertisementTypeCollectionName);
         RealtorContactCollection = _db.GetCollection<RealtorContactModel>(RealtorContactCollectionName);
         FacebookPostCollection = _db.GetCollection<FacebookPostModel>(FacebookPostCollectionName);
+        FacebookTemplateCollection = _db.GetCollection<FacebookTemplateModel>(FacebookTemplateCollectionName);
+        FacebookGroupCollection = _db.GetCollection<FacebookGroupModel>(FacebookGroupCollectionName);
     }
 
     public string DbName { get; }
@@ -45,6 +48,8 @@ public class DbConnection : IDbConnection
     public string AdvertisementTypeCollectionName { get; } = "advertisementTypes";
     public string RealtorContactCollectionName { get; } = "realtorContacts";
     public string FacebookPostCollectionName { get; } = "facebookPosts";
+    public string FacebookTemplateCollectionName { get; } = "facebookTemplates";
+    public string FacebookGroupCollectionName { get; } = "facebookGroups";
     public MongoClient Client { get; }
     public IMongoCollection<CategoryModel> CategoryCollection { get; }
     public IMongoCollection<LocationModel> LocationCollection { get; }
@@ -54,4 +59,6 @@ public class DbConnection : IDbConnection
     public IMongoCollection<AdvertisementTypeModel> AdvertisementTypeCollection { get; }
     public IMongoCollection<RealtorContactModel> RealtorContactCollection { get; }
     public IMongoCollection<FacebookPostModel> FacebookPostCollection { get; }
+    public IMongoCollection<FacebookTemplateModel> FacebookTemplateCollection { get; }
+    public IMongoCollection<FacebookGroupModel> FacebookGroupCollection { get; }
 }

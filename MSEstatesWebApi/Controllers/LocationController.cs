@@ -17,8 +17,8 @@ public class LocationController : Controller
         _locationData = locationData;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateLocation")]
     public async Task AddLocation(LocationModel location)
@@ -34,8 +34,8 @@ public class LocationController : Controller
         return locations;
     }
     
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPut]
     [Route("UpdateLocation")]
     public async Task<IActionResult> Update([FromBody] LocationModel? updatedLocation)

@@ -17,8 +17,8 @@ public class AdvertisementTypeController : Controller
         _advertisementTypeData = advertisementTypeData;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateAdvertisementType")]
     public async Task AddAdvertisementType(AdvertisementTypeModel advertisementType)

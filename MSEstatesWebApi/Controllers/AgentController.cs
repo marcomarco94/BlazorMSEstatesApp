@@ -17,8 +17,8 @@ public class AgentController : Controller
         _agentData = agentData;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateAgent")]
     public async Task CreateAgent(AgentModel agent)
@@ -26,8 +26,8 @@ public class AgentController : Controller
         if (ModelState.IsValid) await _agentData.CreateAgent(agent);
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPatch]
     [Route("UpdateAgent/{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] AgentModel? updatedAgent)

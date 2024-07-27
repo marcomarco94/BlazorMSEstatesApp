@@ -17,8 +17,8 @@ public class CategoryController : Controller
         _categoryData = categoryData;
     }
 
-    [Authorize(Roles = "Task.Write")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateCategory")]
     public async Task AddCategory(CategoryModel category)

@@ -1,0 +1,94 @@
+﻿@using MSEstatesAppLibrary.Models
+@inject HttpClient Http
+@inject ListingStateService ListingStateService
+
+<FluentStack
+    Orientation="Orientation.Vertical">
+    <Fluentsack
+        Orientation="Orientation.Horizontal">
+        <FluentSearch
+            @bind-Value="@_searchValue"
+            @bind-Value:after=HandleSearchInput
+            Placeholder="Search for State"/>
+        <FluentIcon Value="@(new Icons.Regular.Size28.ArrowClockwise())" IconColor="Color.Accent" OnClick="RefreshAllListingsAsync"></FluentIcon>
+    </Fluentsack>
+
+    @if (ListingStateService.Listings != null)
+    {
+        <FluentListbox 
+            Height="600px"
+            Width="85%"
+            Items="@ListingStateService.Listings"
+            OptionText="@(p => p.Id?.ToString())"
+            @bind-SelectedOption="@ListingStateService.SelectedListing"
+            @bind-SelectedOption:after="OnSelectedListingChanged">
+            <OptionTemplate>
+                <FluentStack>
+                    <FluentText>@context.Token</FluentText>
+                    <FluentText>@context.ListingName</FluentText>
+                </FluentStack>
+            </OptionTemplate>
+        </FluentListbox>
+    }
+    else
+    {
+        <p>Please wait a moment. Loading...</p>
+    }
+</FluentStack>  
+
+
+@code {
+    [Parameter] public ListingModel? SelectedListing { get; set; }
+    [Parameter] public EventCallback<ListingModel> SelectedListingChanged { get; set; }
+
+    private List<ListingModel>? _listingsCache;
+
+    private string _searchValue = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ListingStateService.Listings == null)
+        {
+            await RefreshAllListingsAsync();
+        }
+
+    }
+
+    private async Task OnSelectedListingChanged()
+    {
+        if (ListingStateService.SelectedListing == null)
+            return;
+        SelectedListing = ListingStateService.SelectedListing;
+        await SelectedListingChanged.InvokeAsync(SelectedListing);
+    }
+    
+    private async Task RefreshAllListingsAsync()
+    {
+        try
+        {
+            ListingStateService.Listings = _listingsCache = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void HandleSearchInput()
+    {
+        if (ListingStateService.Listings == null) 
+            return;
+        if (string.IsNullOrWhiteSpace(_searchValue))
+        {
+            ListingStateService.Listings = _listingsCache;
+        }
+        else
+        {
+            ListingStateService.Listings = _listingsCache?.Where(p => (p.Token != null && p.Token.Contains(_searchValue, StringComparison.OrdinalIgnoreCase)) ||
+                                                                      (p.ListingName != null && p.ListingName.Contains(_searchValue, StringComparison.OrdinalIgnoreCase))).ToList();
+        }
+    }
+
+}

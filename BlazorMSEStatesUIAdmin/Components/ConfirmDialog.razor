@@ -1,0 +1,24 @@
+@implements IDialogContentComponent<string>
+
+<h4>@Content</h4>
+
+@if (Dialog != null)
+{
+    <FluentDialogFooter>
+        <FluentButton Appearance="Appearance.Accent" OnClick="@CloseAsync">OK</FluentButton>
+    </FluentDialogFooter>
+}
+
+@code {
+    [Parameter]
+    public string Content { get; set; } = default!;
+
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    private async Task CloseAsync()
+    {
+        await Dialog!.CancelAsync();
+    }
+
+}

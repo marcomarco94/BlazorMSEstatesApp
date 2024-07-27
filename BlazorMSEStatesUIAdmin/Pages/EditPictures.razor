@@ -1,0 +1,160 @@
+﻿@page "/edit-pictures/{Id}"
+@using MSEstatesAppLibrary.Models
+@inject HttpClient Http
+@inject ImageService ImageService
+@inject IDialogService DialogService
+
+
+<FluentHeader Style="margin: 0 0 15px 0">Edit Pictures</FluentHeader>
+@*<FluentSplitter Orientation="Orientation.Horizontal" BarSize="6" Panel1MinSize="15%" Panel2MinSize="15%">
+    <Panel1>*@
+@if (_listing != null)
+{ 
+    <FluentStack Orientation="Orientation.Horizontal">
+            <FluentToolbar>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="OnSaveChangesClicked">Save Changes</FluentButton>
+                <FluentButton Appearance="Appearance.Neutral" OnClick="OnClearImagesClicked">Clear Images</FluentButton>
+                <ImageUpload
+                    ListingId="@_listing.Id"
+                    OnUploadCompleted="OnImageUploaded">
+                </ImageUpload>
+            </FluentToolbar>
+        </FluentStack>
+        
+
+            <FluentDragContainer TItem="string"
+                                 OnDropEnd="@(e => OnDropEnd(e))">
+                <FluentGrid Spacing="2">
+                    @foreach (var imageUrl in _listing.ImageUrls)
+                    {
+                    <FluentGridItem sm="3">
+                        <FluentDropZone Id="@imageUrl" Draggable="true" Droppable="true" Style="width: 100%; height: 100%;">
+                            <img src="@ImageService.GetFullImagePath(imageUrl)" @onclick="() => OnImageClicked(imageUrl)"
+                                 alt=" Listing Image" style="width: 100%; height: 100%; object-fit: contain;"/>
+                            @if (_selectedImageUrl == imageUrl)
+                            {
+                                <FluentButton Icon="Delete" OnClick="() => OnRemoveClicked(imageUrl)">Delete</FluentButton> 
+                            }
+                        </FluentDropZone>
+                    </FluentGridItem>
+                    }
+                </FluentGrid>
+            </FluentDragContainer>
+
+            }
+        @*       </Panel1>
+         <Panel2>
+             <SfImageEditor @ref="_imageEditor" Height="700px">
+                <ImageEditorEvents Saving="OnImageSaved"></ImageEditorEvents>
+            </SfImageEditor> 
+        </Panel2>
+    </FluentSplitter>  *@
+
+@code {
+    [Parameter] public string? Id { get; set; }
+    private ListingModel? _listing;
+    // private SfImageEditor? _imageEditor;
+    private string? _selectedImageUrl = string.Empty;
+    
+    private readonly DialogParameters _parameters = new()
+    { 
+        Title = "Info!",
+        Width = "500px",
+        Height = "200px",
+        TrapFocus = true,
+        Modal = true,
+        PreventScroll = true
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetListing();
+    }
+
+    private async Task GetListing()
+    {
+        try
+        {
+            _listing = await Http.GetFromJsonAsync<ListingModel>($"api/Listing/{Id}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
+    }
+
+    private async Task OnSaveChangesClicked()
+    {
+        await Http.PostAsJsonAsync("api/Listing/UpdateListing", _listing);
+        await DialogService.ShowDialogAsync<ConfirmDialog>("Images Updated", _parameters);
+        await GetListing();
+        StateHasChanged();
+    }
+    
+    private async Task OnImageUploaded()
+    {
+        await GetListing();
+        StateHasChanged();
+    }
+    
+    // private async Task OnImageSaved()
+    // {
+    //     if (_imageEditor != null)
+    //     {
+    //         var editedImageData = await _imageEditor.GetImageDataAsync();
+    //         using var stream = new MemoryStream(editedImageData);
+    //         using var content = new MultipartFormDataContent();
+    //         using var streamContent = new StreamContent(stream!);
+    //         streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+    //         content.Add(streamContent, "file", "image.jpg"); // Fixed line
+    //         content.Add(new StringContent(_listing?.Id ?? ""), "listingId");
+
+    //         var response = await Http.PostAsync("api/Listing/UploadImage", content);
+    //         await GetListing();
+    //         StateHasChanged();
+    //     }
+    // }
+
+    private void OnClearImagesClicked()
+    {
+        _listing?.ImageUrls?.Clear();
+    }
+
+    private void OnImageClicked(string? imageUrl)
+    {
+        _selectedImageUrl = imageUrl;
+        // await _imageEditor.OpenAsync(ImageService.GetFullImagePathHq(imageUrl));
+    }
+
+    
+    private void OnRemoveClicked(string? imageUrl)
+    {
+        _listing?.ImageUrls?.Remove(imageUrl);
+    }
+
+    private void OnDropEnd(FluentDragEventArgs<string> e)
+    {
+        var oldIndex = _listing.ImageUrls.IndexOf(e.Source.Id);
+        var newIndex = _listing.ImageUrls.IndexOf(e.Target.Id);
+
+        if (oldIndex < 0 || newIndex < 0 || oldIndex == newIndex)
+        {
+            return;
+        }
+
+        var itemToMove = _listing.ImageUrls[oldIndex];
+        _listing.ImageUrls.RemoveAt(oldIndex);
+
+        if (newIndex < _listing.ImageUrls.Count)
+        {
+            _listing.ImageUrls.Insert(newIndex, itemToMove);
+        }
+        else
+        {
+            _listing.ImageUrls.Add(itemToMove);
+        }
+    }
+
+}

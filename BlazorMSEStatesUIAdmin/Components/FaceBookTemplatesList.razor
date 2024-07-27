@@ -1,0 +1,94 @@
+@using MSEstatesAppLibrary.Models
+@inject  HttpClient Http
+
+<FluentStack
+    Orientation="Orientation.Vertical">
+
+    <FluentIcon Value="@(new Icons.Regular.Size28.ArrowClockwise())" IconColor="Color.Accent" OnClick="RefreshTemplates"></FluentIcon>
+
+    @if (_templates != null)
+    {
+    <FluentListbox
+        Height="400px"
+        Width="100%"
+        Items="@_templates"
+        OptionText="@(t => t.Id)"
+        @bind-SelectedOption="@SelectedTemplate"
+        @bind-SelectedOption:after="OnSelectedTemplateChanged">
+        <OptionTemplate>
+            <FluentIcon Icon="Icons.Regular.Size16.Delete" Slot="end" OnClick="@(() => OnTemplateDeleteClicked(context.Id))" />
+            @context.Name
+        </OptionTemplate>
+    </FluentListbox>
+    <FluentTextField Placeholder="Template name" Style="width: 100%" Required="true"  @bind-Value="_newTemplateName"></FluentTextField>
+    <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddTemplateClicked">Add Template</FluentButton>
+    }
+    else
+    {
+    <p>Please wait a moment. Loading...</p>
+    }
+</FluentStack>
+
+@code
+{
+    [Parameter] public FacebookTemplateModel? SelectedTemplate { get; set; }
+    [Parameter] public EventCallback<FacebookTemplateModel> SelectedTemplateChanged { get; set; }
+
+
+    private List<FacebookTemplateModel>? _templates;
+    private string? _newTemplateName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshTemplates();
+    }
+
+    private async Task RefreshTemplates()
+    {
+        _templates = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>("api/FacebookTemplate");
+    }
+
+    private async Task OnAddTemplateClicked()
+    {
+        if (string.IsNullOrWhiteSpace(_newTemplateName))
+        {
+            return;
+        }
+
+        var newTemplate = new FacebookTemplateModel
+        {
+            Name = _newTemplateName,
+            Template = "New template"
+        };
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/FacebookTemplate/CreateFacebookTemplate", newTemplate);
+            response.EnsureSuccessStatusCode();
+            await RefreshTemplates();
+            _newTemplateName = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task OnSelectedTemplateChanged()
+    {
+        await SelectedTemplateChanged.InvokeAsync(SelectedTemplate);
+    }
+
+    private async Task OnTemplateDeleteClicked(string? templateId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/FacebookTemplate/DeleteTemplate/{templateId}");
+            response.EnsureSuccessStatusCode();
+            await RefreshTemplates();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

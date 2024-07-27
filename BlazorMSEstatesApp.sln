@@ -12,6 +12,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSEstatesWebApi", "MSEstate
 		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037} = {5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMSEStatesUIAdmin", "BlazorMSEStatesUIAdmin\BlazorMSEStatesUIAdmin.csproj", "{86401839-6642-4933-A202-6F8A2469AF5D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5B70CA9A-3CF4-4289-AA2C-E2EA80C54037} = {5B70CA9A-3CF4-4289-AA2C-E2EA80C54037}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +35,10 @@ Global
 		{0AE3F3A7-92FF-4C5A-A2EA-880B79157E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AE3F3A7-92FF-4C5A-A2EA-880B79157E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AE3F3A7-92FF-4C5A-A2EA-880B79157E41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86401839-6642-4933-A202-6F8A2469AF5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86401839-6642-4933-A202-6F8A2469AF5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86401839-6642-4933-A202-6F8A2469AF5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86401839-6642-4933-A202-6F8A2469AF5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
