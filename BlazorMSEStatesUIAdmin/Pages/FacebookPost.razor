@@ -1,5 +1,5 @@
 ﻿@page "/facebook-post/{Id}"
-@using MSEstatesAppLibrary.Models
+@using BlazorMSEstatesUIAdmin.Models
 @inject HttpClient Http
 @inject IDialogService DialogService
 
@@ -8,12 +8,18 @@
 <FluentHeader Style="margin: 0 0 15px 0">Facebook Post</FluentHeader>
 
  <FluentGrid>
-    <FluentGridItem xs="12" sm="4">
-        <FaceBookTemplatesList
-            @bind-SelectedTemplate:get="_template"
-            @bind-SelectedTemplate:set="OnTemplateSet">
-        </FaceBookTemplatesList>
-    </FluentGridItem>
+     <FluentGridItem xs="12" sm="4">
+         <FaceBookTemplatesList
+             @bind-SelectedTemplate:get="_selectedTemplate"
+             @bind-SelectedTemplate:set="OnTemplateSet">
+         </FaceBookTemplatesList>
+         <p></p>
+         <PreviousPostsList
+             Id="@Id"
+             @bind-SelectedPost:get="_selectedPost"
+             @bind-SelectedPost:set="OnPostSet">
+         </PreviousPostsList>
+     </FluentGridItem>
     
     <FluentGridItem xs="12" sm="8">
         @if (_filledTemplate != null)
@@ -22,7 +28,7 @@
                 @bind-Value="@_filledTemplate.Template">
             </FluentTextArea>
             <p/>
-            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="PostToFacebookPake">Post to FB</FluentButton>
+            <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick=" PostToFacebookPage">Post to FB</FluentButton>
             <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="PostToMarketPlace">Post to Marketplace</FluentButton>
         }
     </FluentGridItem> 
@@ -31,8 +37,9 @@
 @code
 {
     [Parameter] public string? Id { get; set; }
-    private FacebookTemplateModel? _template;
+    private FacebookTemplateModel? _selectedTemplate;
     private FacebookTemplateModel? _filledTemplate;
+    private FacebookTemplateModel? _selectedPost;
 
     private readonly DialogParameters _parameters = new()
     { 
@@ -46,12 +53,12 @@
     
     private async Task OnTemplateSet(FacebookTemplateModel template)
     {
-        _template = template;
-        if (_template != null)
+        _selectedTemplate = template;
+        if (_selectedTemplate != null)
         {
             try
             {
-                _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplate/GetFilledTemplate/{_template.Id}/{Id}");
+                _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplate/GetFilledTemplate/{_selectedTemplate.Id}/{Id}");
             }
             catch (Exception e)
             {
@@ -61,8 +68,15 @@
         }
     }
     
+    private void OnPostSet(FacebookTemplateModel post)
+    {
+        _selectedPost = post;
+        if (_selectedPost != null)
+            _filledTemplate = post;
+    }
     
-    private async Task PostToFacebookPake()
+    
+    private async Task PostToFacebookPage()
     {
         await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
         FacebookPostModel post = new FacebookPostModel
@@ -84,6 +98,7 @@
     private async Task PostToMarketPlace()
     {
         await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
+       _filledTemplate.ListingId = Id;
         FacebookPostModel post = new FacebookPostModel
         {
             Template = _filledTemplate,
@@ -91,6 +106,7 @@
         };
         try
         {
+            await Http.PostAsJsonAsync("api/FacebookTemplate/UpdatePostedTemplate", _filledTemplate);
             await Http.PostAsJsonAsync("api/FacebookPost/CreateMarketPlacePost", post);
         }
         catch (Exception e)

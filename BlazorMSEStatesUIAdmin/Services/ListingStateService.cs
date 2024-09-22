@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using MSEstatesAppLibrary.Models;
+using BlazorMSEstatesUIAdmin.Models;
 
 namespace BlazorMSEstatesUIAdmin.Services;
 
@@ -7,4 +6,5 @@ public class ListingStateService
 {
     public ListingModel? SelectedListing;
     public List<ListingModel>? Listings;
+    public List<ListingModel>? FilteredItems;
 }

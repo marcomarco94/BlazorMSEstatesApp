@@ -2,7 +2,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace MarketPlaceHelper.Services;
+namespace MSEstatesAppLibrary.Services;
 
 public class AzureBlobService
 {
@@ -25,7 +25,17 @@ public class AzureBlobService
             var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
             using var uploadFileStream = new MemoryStream(fileData);
-            await blobClient.UploadAsync(uploadFileStream, true);
+            
+            var blobHttpHeaders = new BlobHttpHeaders
+            {
+                ContentType = "image/jpeg",
+                CacheControl = "public, max-age=31536000",
+            };
+            
+            await blobClient.UploadAsync(uploadFileStream, new BlobUploadOptions
+            {
+                HttpHeaders = blobHttpHeaders,
+            });
         }
         catch (Exception e)
         {        

@@ -1,0 +1,57 @@
+﻿@using BlazorMSEstatesUIAdmin.Models
+@inject  HttpClient Http
+
+<FluentStack
+    Orientation="Orientation.Vertical">
+    
+    @if (_posts != null)
+    {
+        <FluentListbox
+            Height="100px"
+            Width="100%"
+            Items="@_posts"
+            OptionText="@(t => t.DateCreated?.ToString("dd.MM.yyyy HH:mm") ?? t.Id)"
+            @bind-SelectedOption="@SelectedPost"
+            @bind-SelectedOption:after="OnSelectedPostChanged">
+        </FluentListbox> 
+    }
+    else
+    {
+    <p>Please wait a moment. Loading...</p>
+    }
+</FluentStack>
+
+@code
+{
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public FacebookTemplateModel? SelectedPost { get; set; }
+    [Parameter] public EventCallback<FacebookTemplateModel> SelectedPostChanged { get; set; }
+
+
+    private List<FacebookTemplateModel>? _posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshPreviousPosts();
+    }
+
+    private async Task RefreshPreviousPosts()
+    {
+        try
+        {
+            _posts = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>($"api/FacebookTemplate/GetFacebookPostsByListingId/{Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching posts: {ex.Message}");
+            _posts = new List<FacebookTemplateModel>(); 
+        }
+    }
+    
+
+    private async Task OnSelectedPostChanged()
+    {
+        await SelectedPostChanged.InvokeAsync(SelectedPost);
+    }
+    
+}

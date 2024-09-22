@@ -3,10 +3,10 @@
 
 <header class="navigation fixed-top"> 
     <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light px-0 py-0">
-            <NavLink class="navbar-brand logo" href="">
-                <img class="logo-default" src="images/logo.png" alt="logo"/>
-                <img class="logo-white" src="images/logo-white.png" alt="logo"/>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <NavLink class="navbar-brand logo" href="" data-enhance-nav="false">
+                <img class="logo-default" src="@Assets["images/logo.png"]" alt="logo"/>
+                <img class="logo-white" src="@Assets["images/logo-white.png"]" alt="logo"/>
             </NavLink>
             <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navigation"
                     aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation" onclick="document.querySelector('.navbar-toggler').click()">
@@ -51,7 +51,7 @@
 
 @if (_currentUrl != "" && _currentUrl.Contains("?") == false)
 {
-    <section class="single-page-header">
+<section class="single-page-header" style="background-image: url('@Assets["images/index/breadcrump.jpeg"]');">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -69,7 +69,7 @@
 }
 
 @code {
-    private string? _currentUrl;
+    private string _currentUrl = String.Empty;
 
     protected override void OnInitialized()
     {
@@ -83,7 +83,7 @@
         var segments = uri.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         _currentUrl = segments.Length > 0 ? segments[0].ToUpper() : "";
 
-        var questionMarkIndex = _currentUrl.IndexOf("?");
+        var questionMarkIndex = _currentUrl.IndexOf("?", StringComparison.Ordinal);
         if (questionMarkIndex != -1)
         {
             _currentUrl = _currentUrl.Substring(0, questionMarkIndex);

@@ -34,10 +34,10 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" @onclick="() => OnSortChange(true)">Price - Low to High</a>
+                            <a class="dropdown-item" @onclick="() => OnSortChange(true)">Price - High to Low</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" @onclick="() => OnSortChange(false)">Price - High to Low</a>
+                            <a class="dropdown-item" @onclick="() => OnSortChange(false)">Price - Low to High</a>
                         </li>
                     </ul>
                 </div>
@@ -47,14 +47,13 @@
         <div class="row">
             @if (_filteredListings is not null)
             { 
-                @*  <Virtualize Items="@_filteredListings" Context="l" OverscanCount="15"> *@
-                foreach (var l in _filteredListings)
-                {
+                 foreach (var l in _filteredListings) 
+                { 
                     <div class="col-12 col-md-6 col-xl-4 pb-4">
                         <div class="single-featured-property mb-50">
                             <NavLink href="@GetListingUri(l.Id)" target="_blank" ForceReload="true">
                                 <div class="property-thumb">
-                                    <img loading="lazy" class="img-fluid" src="@l.ImageUrls.FirstOrDefault()" alt="Property Thumbnail">
+                                    <img loading="lazy" class="img-fluid" src="@l.ImageUrls.FirstOrDefault()" alt="Thumbnail @l.ListingName in @l.Location.Location">
                                     <div class="tag">
                                         <span>For @l.AdvertisementType.AdvertisementType</span>
                                     </div>
@@ -63,7 +62,7 @@
                                     </div>
                                 </div>
                                 <div class="property-content">
-                                    <h5>@l.ListingName</h5>
+                                    <h4>@l.ListingName</h4>
                                     <p class="location">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" fill=#000000 class="bi bi-geo-fill" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
@@ -94,16 +93,12 @@
                                 </div>
                             </NavLink>
                         </div>
-                    </div>
-                    @*   </Virtualize> *@
-                }
-            }
-            else
-            {
-                <div class="col-12">
-                    <p class="text-center">One Moment...Loading...</p>
+                    </div> 
+                } 
+                <div class="col-12 text-center" style="margin-bottom: 1rem;"> 
+                    <button class="btn btn-primary w-75 my-3 btn-lg" @onclick="LoadMore" style="font-size: 1rem;">Show More Listings</button>
                 </div>
-            }
+             } 
         </div>
         <button class="btn btn-primary btn-sm scrollToTopButton" onclick="window.scrollTo(0,0)">
             <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
@@ -127,28 +122,28 @@
     protected override async Task OnInitializedAsync()
    {
            _listings = await ApiService.GetListings();
-           _filteredListings = await FilterService.FilterListings(_listings);
+           _filteredListings = FilterService.FilterListings(_listings);
    }
 
     private void OnSortChange(bool sortValue)
     {
         if (sortValue)
         {
-            FilterService.SortedBy = "Price - Low to High";
+            FilterService.SortedBy = "Price - High to Low";
         }
         else
         {
-            FilterService.SortedBy = "Price - High to Low";
+            FilterService.SortedBy = "Price - Low to High";
         }
     }
 
-    private async void HandleSearchFilterChanged()
+    private void HandleSearchFilterChanged()
     {
-       
-        await InvokeAsync(async () => await FilterListings());
+        FilterListings();
+        StateHasChanged();
     }
     
-    private async Task FilterListings()
+    private void FilterListings()
     {
         var uriBuilder = new UriBuilder(NavigationManager.Uri)
         {
@@ -156,10 +151,16 @@
             Query = $"searchInput={FilterService.SearchInput}&minPrice={FilterService.MinPriceInput}&maxPrice={FilterService.MaxPriceInput}&category={FilterService.SelectedCategory}&location={FilterService.SelectedLocation}&selectedAdvertisement={FilterService.SelectedAdvertisement}&sortedBy={FilterService.SortedBy}"
         };
         NavigationManager.NavigateTo(uriBuilder.ToString(), false);
-        _filteredListings = await FilterService.FilterListings(_listings);
-        await InvokeAsync(StateHasChanged);
+        FilterService.ItemsToShow = 42;
+        _filteredListings = FilterService.FilterListings(_listings);
     }
 
+    private void LoadMore()
+    {
+        FilterService.ItemsToShow += 42;
+        _filteredListings = FilterService.FilterListings(_listings);
+    }
+    
     public void Dispose()
     {
         FilterService.OnSearchFilterChanged -= HandleSearchFilterChanged;

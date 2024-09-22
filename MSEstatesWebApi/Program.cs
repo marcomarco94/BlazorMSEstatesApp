@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Azure;
-using MarketPlaceHelper.Services;
+using System.Net;
 using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Services;
 using MSEstatesAppLibrary.Services.MarketPlace;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +21,12 @@ builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
 
 // Attention 
-builder.Services.AddCors();
+//builder.Services.AddCors();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse("15.235.206.108"));
+});
 
 builder.Services.AddSingleton<IDbConnection, DbConnection>();
 builder.Services.AddSingleton<ICategoryData, MongoCategoryData>();
@@ -44,17 +48,17 @@ builder.Services.AddScoped<SeleniumService>();
 builder.Services.AddScoped<MarketPlacePostingService>();
 builder.Services.AddScoped<MSEstatesAppLibrary.Services.MarketPlace.MarketPlaceHelper>();
 
-var app = builder.Build();
-
-
-//Attention
-app.UseCors(options =>
+builder.Services.AddCors(options =>
 {
-    options.WithOrigins("https://www.ms-estates.net", "https://localhost:44390", "https://localhost:7043", "https://thankful-flower-02b259a00.5.azurestaticapps.net")
-        .WithMethods("GET", "POST", "DELETE")
-        .AllowAnyHeader();
+    options.AddPolicy("AllowLocalhost5000",
+        builder => builder.WithOrigins("http://localhost:5000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
 
+var app = builder.Build();
+
+app.UseCors("AllowLocalhost5000");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,7 +68,10 @@ if (app.Environment.IsDevelopment())
     app.UseResponseCaching();
 }
 
-app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseAuthentication();
 

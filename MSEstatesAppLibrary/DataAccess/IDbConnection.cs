@@ -22,7 +22,7 @@ public interface IDbConnection
     IMongoCollection<AgentModel> AgentCollection { get; }
     IMongoCollection<RealtorContactModel> RealtorContactCollection { get; }
     IMongoCollection<AdvertisementTypeModel> AdvertisementTypeCollection { get; }
-    IMongoCollection<FacebookPostModel> FacebookPostCollection { get; }
+    IMongoCollection<FacebookTemplateModel> FacebookPostCollection { get; }
     IMongoCollection<FacebookTemplateModel> FacebookTemplateCollection { get; }
     IMongoCollection<FacebookGroupModel> FacebookGroupCollection { get; }
 }

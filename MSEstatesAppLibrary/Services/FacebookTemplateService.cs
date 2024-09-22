@@ -1,15 +1,15 @@
 using MSEstatesAppLibrary.Models;
 
-namespace MarketPlaceHelper.Services;
+namespace MSEstatesAppLibrary.Services;
 
 public class FacebookTemplateService
 {
-    public string FillTemplateWithListingData(string? template, ListingModel? listing)
+    public string FillTemplateWithListingData(string template, ListingModel? listing)
     {
         var filledTemplate = template
             .Replace("{ListingName}", listing?.ListingName)
             .Replace("{Location}", listing?.Location?.Location)
-            .Replace("{Price}", listing?.Price.ToString())
+            .Replace("{Price}", listing?.Price.ToString("N0"))
             .Replace("{Size}", listing?.Size.ToString())
             .Replace("{Bedrooms}", listing?.Bedrooms.ToString())
             .Replace("{Bathrooms}", listing?.Bathrooms.ToString())

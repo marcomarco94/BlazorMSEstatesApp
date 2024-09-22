@@ -1,5 +1,5 @@
 ﻿@page "/edit-pictures/{Id}"
-@using MSEstatesAppLibrary.Models
+@using BlazorMSEstatesUIAdmin.Models
 @inject HttpClient Http
 @inject ImageService ImageService
 @inject IDialogService DialogService
@@ -53,7 +53,6 @@
 @code {
     [Parameter] public string? Id { get; set; }
     private ListingModel? _listing;
-    // private SfImageEditor? _imageEditor;
     private string? _selectedImageUrl = string.Empty;
     
     private readonly DialogParameters _parameters = new()
@@ -98,24 +97,6 @@
         await GetListing();
         StateHasChanged();
     }
-    
-    // private async Task OnImageSaved()
-    // {
-    //     if (_imageEditor != null)
-    //     {
-    //         var editedImageData = await _imageEditor.GetImageDataAsync();
-    //         using var stream = new MemoryStream(editedImageData);
-    //         using var content = new MultipartFormDataContent();
-    //         using var streamContent = new StreamContent(stream!);
-    //         streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-    //         content.Add(streamContent, "file", "image.jpg"); // Fixed line
-    //         content.Add(new StringContent(_listing?.Id ?? ""), "listingId");
-
-    //         var response = await Http.PostAsync("api/Listing/UploadImage", content);
-    //         await GetListing();
-    //         StateHasChanged();
-    //     }
-    // }
 
     private void OnClearImagesClicked()
     {
@@ -124,8 +105,7 @@
 
     private void OnImageClicked(string? imageUrl)
     {
-        _selectedImageUrl = imageUrl;
-        // await _imageEditor.OpenAsync(ImageService.GetFullImagePathHq(imageUrl));
+        _selectedImageUrl = imageUrl; 
     }
 
     

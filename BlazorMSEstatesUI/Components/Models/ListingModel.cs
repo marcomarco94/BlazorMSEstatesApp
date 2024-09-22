@@ -2,7 +2,7 @@ namespace BlazorMSEstatesUI.Components.Models;
 
 public class ListingModel
 {
-    public string? Id { get; set; }
+    public string? Id { get; set; } 
     public string? Token { get; set; }
     public string? ListingName { get; set; }
     public string? ShortDescription { get; set; }

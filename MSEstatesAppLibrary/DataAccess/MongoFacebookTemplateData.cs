@@ -25,13 +25,19 @@ public class MongoFacebookTemplateData : IFacebookTemplateData
 
     public async Task UpdateTemplate(FacebookTemplateModel facebookTemplate)
     {
-        if (facebookTemplate == null)
-        {
-            throw new ArgumentNullException(nameof(facebookTemplate));
-        }
+        facebookTemplate.DateCreated = DateTime.Now;
+        var filter = Builders<FacebookTemplateModel>.Filter.Eq(template => template.Id, facebookTemplate.Id);
+        var existingPost = await _facebookTemplates.Find(filter).FirstOrDefaultAsync();
 
-        var filter = Builders<FacebookTemplateModel>.Filter.Eq(f => f.Id, facebookTemplate.Id);
-        await _facebookTemplates.ReplaceOneAsync(filter, facebookTemplate);
+        if (existingPost != null)
+        {
+            await _facebookTemplates.ReplaceOneAsync(filter, facebookTemplate);
+        }
+        else
+        {
+            facebookTemplate.Id = null;
+            await _facebookTemplates.InsertOneAsync(facebookTemplate);
+        }
     }
 
     public async Task<FacebookTemplateModel> GetTemplateById(string? templateId)

@@ -1,11 +1,11 @@
 ﻿@page "/listings"
+@using System.Globalization
 @using System.Text.RegularExpressions
-@using MSEstatesAppLibrary.Models
+@using BlazorMSEstatesUIAdmin.Models
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ImageService ImageService
 @inject IJSRuntime JS
-@inject IDialogService DialogService
 @inject ListingStateService ListingStateService
 
 <PageTitle>Listings</PageTitle>
@@ -62,7 +62,7 @@
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Price</FluentLabel>
-                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Price" />
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="FormattedPrice" />
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 30%; font-size: 1.2em">Features</FluentLabel>
@@ -173,6 +173,21 @@
             throw;
         }
     }
+    
+    private string FormattedPrice
+    {
+        get => ListingStateService.SelectedListing?.Price.ToString("N0", CultureInfo.InvariantCulture) ?? string.Empty;
+        set
+        {
+            if (int.TryParse(value, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var result))
+            {
+                if (ListingStateService.SelectedListing != null)
+                {
+                    ListingStateService.SelectedListing.Price = result;
+                }
+            }
+        }
+    }
 
     private void SortList(FluentSortableListEventArgs args)
     {
@@ -222,7 +237,6 @@
     {
         if (feature == String.Empty) return;
         ListingStateService.SelectedListing?.Features?.Remove(feature);
-
     }
     
     private void GenerateListingToken()
@@ -281,10 +295,10 @@
                 if (ListingStateService.SelectedListing != null)
                 {
                     ListingStateService.SelectedListing.Token = _updatedToken;
-                    HttpResponseMessage response = await Http.PostAsJsonAsync("api/Listing/CreateListing", ListingStateService.SelectedListing);
+                    await Http.PostAsJsonAsync("api/Listing/CreateListing", ListingStateService.SelectedListing);
                 }
             }
-            
+            await RefreshAllListingsAsync(); 
         }
         catch (Exception e)
         {
@@ -294,13 +308,30 @@
         StateHasChanged();
     }
     
+    private async Task RefreshAllListingsAsync()
+    {
+        try
+        {
+            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
     private void NavigateToEditPictures()
     {
-        NavigationManager.NavigateTo($"/edit-pictures/{ListingStateService.SelectedListing?.Id}");
+        var baseUri = NavigationManager.BaseUri;
+        var relativePath = $"{baseUri}edit-pictures/{ListingStateService.SelectedListing?.Id}";
+        NavigationManager.NavigateTo(relativePath);
     }
 
     private void NavigateToFaceBookPost()
     {
-        NavigationManager.NavigateTo($"/facebook-post/{ListingStateService.SelectedListing?.Id}");
+        var baseUri = NavigationManager.BaseUri;
+        var relativePath = $"{baseUri}facebook-post/{ListingStateService.SelectedListing?.Id}";
+        NavigationManager.NavigateTo(relativePath);
     }
 }

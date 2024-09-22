@@ -1,4 +1,4 @@
-@using MSEstatesAppLibrary.Models
+@using BlazorMSEstatesUIAdmin.Models
 @inject  HttpClient Http
 
 <FluentStack
@@ -45,7 +45,7 @@
 
     private async Task RefreshTemplates()
     {
-        _templates = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>("api/FacebookTemplate");
+        _templates = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>("api/FacebookTemplate/GetFacebookTemplates");
     }
 
     private async Task OnAddTemplateClicked()

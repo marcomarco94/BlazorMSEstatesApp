@@ -1,17 +1,17 @@
-﻿@using MSEstatesAppLibrary.Models
+﻿@using BlazorMSEstatesUIAdmin.Models
 @inject HttpClient Http
 @inject ListingStateService ListingStateService
 
 <FluentStack
     Orientation="Orientation.Vertical">
-    <Fluentsack
+    <FluentStack
         Orientation="Orientation.Horizontal">
         <FluentSearch
             @bind-Value="@_searchValue"
             @bind-Value:after=HandleSearchInput
             Placeholder="Search for State"/>
         <FluentIcon Value="@(new Icons.Regular.Size28.ArrowClockwise())" IconColor="Color.Accent" OnClick="RefreshAllListingsAsync"></FluentIcon>
-    </Fluentsack>
+    </FluentStack>
 
     @if (ListingStateService.Listings != null)
     {
@@ -41,8 +41,6 @@
     [Parameter] public ListingModel? SelectedListing { get; set; }
     [Parameter] public EventCallback<ListingModel> SelectedListingChanged { get; set; }
 
-    private List<ListingModel>? _listingsCache;
-
     private string _searchValue = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -66,7 +64,7 @@
     {
         try
         {
-            ListingStateService.Listings = _listingsCache = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
+            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
             StateHasChanged();
         }
         catch (Exception e)
@@ -78,17 +76,21 @@
 
     private void HandleSearchInput()
     {
-        if (ListingStateService.Listings == null) 
+        if (ListingStateService.FilteredItems == null)
             return;
+
         if (string.IsNullOrWhiteSpace(_searchValue))
         {
-            ListingStateService.Listings = _listingsCache;
+            ListingStateService.Listings = new List<ListingModel>(ListingStateService.FilteredItems);
         }
         else
         {
-            ListingStateService.Listings = _listingsCache?.Where(p => (p.Token != null && p.Token.Contains(_searchValue, StringComparison.OrdinalIgnoreCase)) ||
-                                                                      (p.ListingName != null && p.ListingName.Contains(_searchValue, StringComparison.OrdinalIgnoreCase))).ToList();
+            ListingStateService.Listings = ListingStateService.FilteredItems
+                .Where(p => (p.Token != null && p.Token.Contains(_searchValue, StringComparison.OrdinalIgnoreCase)) ||
+                            (p.ListingName != null && p.ListingName.Contains(_searchValue, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
         }
+        StateHasChanged();
     }
 
 }

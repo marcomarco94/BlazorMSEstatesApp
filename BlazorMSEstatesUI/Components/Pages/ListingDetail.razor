@@ -1,11 +1,12 @@
 ﻿@inject ApiService ApiService
 @inject HttpClient Http
 @page "/listing-detail/{Id}"
+
 <PageTitle>Listing Detail</PageTitle>
 
 <HeadContent>
-    <meta name="description" content="Details about a specific property listing by MS Estates in Phuket. Explore the features and investment potential.">
-    <meta name="keywords" content="Phuket property details, MS Estates listing details, Investment potential">
+    <meta name="description" content="@_listing.ListingName by MS Estates in Phuket.">
+    <meta name="keywords" content="Phuket property details, MS Estates listing, Real estate, Property for sale, Phuket homes">
     <meta property="og:title" content="@_listing.ListingName">
     <meta property="og:description" content="@_listing.ShortDescription">
     <meta property="og:image" content="@_listing.ImageUrls[0]">
@@ -68,14 +69,14 @@
                     <div class="carousel-inner mb-5 strong rounded-3">
                         <div class="carousel-item active">
                             <a href="@_listing?.ImageUrlsOrg.FirstOrDefault()" data-fancybox="gallery">
-                                <img src="@_listing?.ImageUrlsOrg.FirstOrDefault()" class="d-block w-100" alt="Main picture of the advertised house"/>
+                                <img src="@_listing?.ImageUrlsOrg.FirstOrDefault()" class="d-block w-100" alt="Property @_listing.ListingName"/>
                             </a>
                         </div>
                         @foreach (var image in _listing?.ImageUrlsOrg.Skip(1))
                         {
                         <div class="carousel-item">
                             <a href="@image" data-fancybox="gallery">
-                                <img src="@image" class="d-block w-100" alt="Picture of the advertised house"/>
+                                <img src="@image" class="d-block w-100" width="100%" height="auto" alt="Thumbnail of @_listing.ListingName in @_listing.Location.Location"/>
                             </a>
                         </div>
                         }
@@ -96,7 +97,7 @@
                             <button type="button" data-bs-target="#carouselListing" data-bs-slide-to="@i" class="active"
                                     aria-current="true" aria-label="Slide " style="width: 300px ;">
                                 <img class="d-block w-100 shadow-1-strong rounded img-fluid"
-                                     src="@_listing.ImageUrls[i]"/>
+                                     src="@_listing.ImageUrls[i]" alt="Thumbnail of @_listing.ListingName in @_listing.Location.Location"/>
                             </button>
                         }
                     </div>
@@ -126,7 +127,7 @@
             <div class="col-12 col-md-12 col-lg-3 order-lg-1">
                 <div class="contact-realtor-wrapper mt-3 mb-3 ms-sm-3 me-sm-3 ms-md-3 me-md-3">
                     <div class="realtor-info">
-                        <img src="images/about-us/us1.jpg" alt="Us">
+                        <img src="images/about-us/us.jpg" alt="Us">
                         <div class="realtor---info">
                             <h3>@_company?.ContactName</h3>
                             <h6>

@@ -3,7 +3,7 @@ using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Models;
 using SkiaSharp;
 
-namespace MarketPlaceHelper.Services;
+namespace MSEstatesAppLibrary.Services;
 
 public class ListingService
 {

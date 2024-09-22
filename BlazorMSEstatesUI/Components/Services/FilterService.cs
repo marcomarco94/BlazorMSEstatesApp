@@ -12,6 +12,7 @@ public class FilterService
     private string? _selectedCategory;
     private string? _selectedLocation;
     private string? _sortedBy;
+    private int _itemsToShow;
 
 
     public string? SelectedAdvertisement
@@ -68,8 +69,7 @@ public class FilterService
 
     public string? SortedBy
     {
-        get => _sortedBy ?? "Price - Low to High";
-
+        get => _sortedBy ?? "Price - High to Low";
         set
         {
             if (_sortedBy != value)
@@ -104,6 +104,12 @@ public class FilterService
                 NotifySearchFilterChanged();
             }
         }
+    }
+    
+    public int ItemsToShow
+    {
+        get => _itemsToShow == 0 ? 42 : _itemsToShow;
+        set => _itemsToShow = value;
     }
 
     public event Action OnSearchFilterChanged;
@@ -147,7 +153,7 @@ public class FilterService
         }
     }
     
-      public async Task<List<ListingModel>> FilterListings(List<ListingModel> listings)
+      public List<ListingModel> FilterListings(List<ListingModel> listings)
     {
          var filteredListings = new List<ListingModel>(listings);
 
@@ -192,14 +198,16 @@ public class FilterService
                 }
             }
 
-            if (SortedBy == "Price - Low to High" || SortedBy == null)
+            if (SortedBy == "Price - Low to High")
             {
                 filteredListings = filteredListings.OrderBy(l => l.Price).ToList();
             }
-            else if (SortedBy == "Price - High to Low")
+            else if (SortedBy == "Price - High to Low" || SortedBy == null)
             {
                 filteredListings = filteredListings.OrderByDescending(l => l.Price).ToList();
             }
+            
+            filteredListings = filteredListings.Take(ItemsToShow).ToList();
         }
         return filteredListings;
     }

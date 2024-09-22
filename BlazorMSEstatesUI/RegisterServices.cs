@@ -16,7 +16,7 @@ public static class RegisterServices
             BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiUrl")),
             DefaultRequestHeaders =
             {
-                { "Origin", "https://as-ms-estates-webapp.azurewebsites.net" }
+                { "Origin", "http://15.235.206.108/" }
             }
         });
         

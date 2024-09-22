@@ -13,7 +13,7 @@ public class ImageModel
     public string? NameOriginal { get; set; }
     public string? NameResizedImageData { get; set; }
     public string? NameNoLogoImageData { get; set; }
-    public byte[]? NoLogoImageData { get; set; }
-    public byte[]? ResizedImageData { get; set; }
-    public byte[]? OriginalImageData { get; set; }
+    public byte[] NoLogoImageData { get; set; }
+    public byte[] ResizedImageData { get; set; }
+    public byte[] OriginalImageData { get; set; }
 }

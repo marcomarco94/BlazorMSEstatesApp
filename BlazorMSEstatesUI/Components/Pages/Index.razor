@@ -2,6 +2,7 @@
 @using BlazorMSEstatesUI.Components.Layout
 @inject ApiService ApiService
 
+
 <PageTitle>Home</PageTitle>
 
 <HeadContent>
@@ -11,17 +12,15 @@
     <meta property="og:description" content="Explore choosen real estate listings in Phuket with MS Estates. Find your dream property with us.">
 </HeadContent>
 
-<section class="hero-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="block mt-2">
-                    <h1>Property for Rent and Sale Phuket</h1>
-                    <p>Welcome to MS Estates, your trusted Phuket real estate partner, offering exceptional property solutions for residents and investors.</p>
-                </div>
-            </div>
+<section class="hero-area" style="background-image: url('@Assets["images/index/main.jpg"]');">
+        <div class="hero-text">        
+            <h1>Welcome to MS Estates</h1>
+            <p>
+                <span>Buy/Sell</span> |
+                <span>Rentals</span> |
+                <span>Investments</span>
+            </p>
         </div>
-    </div>
 </section>
 
 <SearchListings/>
@@ -76,7 +75,7 @@
                         choose us for their property needs in Phuket.
                     </p>
                     <div class="col-lg-6 mt-4 mb-4 mx-auto text-center">
-                        <img class="img-fluid" src="images/about-us/us1.jpg" alt="Us">
+                        <img class="img-fluid" src="@Assets["images/about-us/us.jpg"]" alt="Us">
                     </div>
                 </div>
             </div>

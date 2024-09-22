@@ -1,0 +1,29 @@
+services:
+   msestateswebapi:
+     environment:
+       - ASPNETCORE_ENVIRONMENT=Production
+       - ASPNETCORE_HTTP_PORTS=3000
+   blazormsestatesui:
+     environment:
+       - ASPNETCORE_ENVIRONMENT=Production
+       - ASPNETCORE_HTTP_PORTS=5000
+
+   mongo:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Your username / password
+      MONGO_INITDB_ROOT_PASSWORD: Your username / password
+
+   mongo-express:
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: Your username / password
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Your username / password
+      ME_CONFIG_MONGODB_URL: Your mongodb container
+      ME_CONFIG_BASICAUTH: true
+      ME_CONFIG_BASICAUTH_USERNAME: Your username / password
+      ME_CONFIG_BASICAUTH_PASSWORD: Your username / password
+      
+   selenium:
+     image: seleniarm/standalone-chromium:latest
+     environment:
+       - SE_OPTS=--username Your username / password --password Your username / password
+       - SE_NODE_MAX_SESSIONS=4

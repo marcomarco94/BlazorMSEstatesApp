@@ -34,7 +34,7 @@ public class DbConnection : IDbConnection
         AgentCollection = _db.GetCollection<AgentModel>(AgentCollectionName);
         AdvertisementTypeCollection = _db.GetCollection<AdvertisementTypeModel>(AdvertisementTypeCollectionName);
         RealtorContactCollection = _db.GetCollection<RealtorContactModel>(RealtorContactCollectionName);
-        FacebookPostCollection = _db.GetCollection<FacebookPostModel>(FacebookPostCollectionName);
+        FacebookPostCollection = _db.GetCollection<FacebookTemplateModel>(FacebookPostCollectionName);
         FacebookTemplateCollection = _db.GetCollection<FacebookTemplateModel>(FacebookTemplateCollectionName);
         FacebookGroupCollection = _db.GetCollection<FacebookGroupModel>(FacebookGroupCollectionName);
     }
@@ -58,7 +58,7 @@ public class DbConnection : IDbConnection
     public IMongoCollection<AgentModel> AgentCollection { get; }
     public IMongoCollection<AdvertisementTypeModel> AdvertisementTypeCollection { get; }
     public IMongoCollection<RealtorContactModel> RealtorContactCollection { get; }
-    public IMongoCollection<FacebookPostModel> FacebookPostCollection { get; }
+    public IMongoCollection<FacebookTemplateModel> FacebookPostCollection { get; }
     public IMongoCollection<FacebookTemplateModel> FacebookTemplateCollection { get; }
     public IMongoCollection<FacebookGroupModel> FacebookGroupCollection { get; }
 }

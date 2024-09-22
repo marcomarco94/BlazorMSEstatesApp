@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "msestateswebapi": "StartDebugging",
+        "blazormsestatesui": "StartDebugging",
+        "reverseproxy": "StartWithoutDebugging",
+        "selenium": "StartWithoutDebugging",
+        "blazormsestatesuiadmin": "DoNotStart"
+      }
+    }
+  }
+}

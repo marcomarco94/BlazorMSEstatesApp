@@ -4,6 +4,7 @@ namespace MSEstatesAppLibrary.DataAccess;
 
 public interface IFacebookPostData
 {
-    Task<List<FacebookPostModel>> GetAllFacebookPosts();
-    Task CreateFacebookPost(FacebookPostModel facebookPost);
+    Task<List<FacebookTemplateModel>> GetAllFacebookPosts();
+    Task<List<FacebookTemplateModel>> GetFacebookPostsByListingId(string id);
+    Task CreateFacebookPost(FacebookTemplateModel facebookPost);
 }

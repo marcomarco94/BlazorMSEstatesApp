@@ -8,10 +8,10 @@ public class ListingModel
     public string? ListingName { get; set; }
     public string? ShortDescription { get; set; }
     public string? Description { get; set; }
-    public int? Bathrooms { get; set; }
-    public int? Bedrooms { get; set; }
-    public int? Price { get; set; }
-    public int? Size { get; set; }
+    public int Bathrooms { get; set; }
+    public int Bedrooms { get; set; }
+    public int Price { get; set; }
+    public int Size { get; set; }
     public List<string>? Features { get; set; }
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     public LocationModel? Location { get; set; }

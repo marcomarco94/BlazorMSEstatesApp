@@ -1,0 +1,128 @@
+services:
+  reverseproxy:
+    build:
+      context: ./Nginx
+      dockerfile: Nginx.Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email marco.pfleiderer@gmx.de -d ms-estates.com -d www.ms-estates.com -d ms-estates.net -d www.ms-estates.net --agree-tos
+    restart: on-failure
+
+  msestateswebapi:
+    image: msestateswebapi
+    build:
+      context: .
+      dockerfile: MSEstatesWebApi/Dockerfile
+    expose:
+        - "3000"
+        - "3001"
+    depends_on:
+        - mongo
+
+  blazormsestatesui:
+    image: blazormsestatesui
+    build:
+      context: .
+      dockerfile: BlazorMSEstatesUI/Dockerfile
+    expose:
+        - "5000"
+    depends_on:
+      - msestateswebapi
+    environment:
+      - ApiUrl=http://msestateswebapi:3000/
+
+  blazormsestatesuiadmin:
+    image: blazormsestatesuiadmin
+    build:
+      context: .
+      dockerfile: BlazorMSEstatesUIAdmin/Dockerfile
+    expose:
+      - "8080"
+    depends_on:
+      - msestateswebapi
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: YOURUSERNAME
+      MONGO_INITDB_ROOT_PASSWORD: YOURPASSWORD
+    volumes:
+      - ./db-data:/data/db
+    expose:
+      - "27017"
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: YOURUSERNAME
+      ME_CONFIG_MONGODB_ADMINPASSWORD: YOURPASSWORD
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: true
+      ME_CONFIG_BASICAUTH_USERNAME: YOURUSERNAME
+      ME_CONFIG_BASICAUTH_PASSWORD: YOURPASSWORD
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Bangkok
+      - SERVERPORT=51820
+      - PEERS=3
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=10.13.13.0
+      - ALLOWEDIPS=0.0.0.0/0
+      - PERSISTENTKEEPALIVE_PEERS=
+      - LOG_CONFS=true
+    volumes:
+      - /opt/wireguard/config:/config
+      - /lib/modules:/lib/modules
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    ports:
+      - 51820:51820/udp
+
+
+  selenium:
+    image: selenium/standalone-chrome:latest
+    environment:
+      - SE_OPTS=--username YOURUSERNAME--password YOURPASSWORD
+      - SE_NODE_MAX_SESSIONS=4
+    shm_size: "2g"
+    ports:
+        - "4444:4444"
+        - "7900:7900"
+    expose:
+      - "4444"
+      - "7900"
+
+
+ 
+ 
+
+
+
+
+
+
+
