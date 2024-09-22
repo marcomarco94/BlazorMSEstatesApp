@@ -1,2 +1,8 @@
-A blazor server web application with API and MongoDB hosted with Azure Web Service (in Asia, performance in eu oder us is a little bit slow )
-https://www.ms-estates.net/
+A Blazor Server web application hosted in containers on a VPS at ms-estates.com/
+
+- Nginx
+- ASP.NET API
+- MongoDB
+- Container support
+
+There are still many things to refactor and opportunities for improvement.
