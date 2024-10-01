@@ -15,7 +15,7 @@ public class MongoAdvertisementTypeData : IAdvertisementTypeData
         _advertisementTypes = db.AdvertisementTypeCollection;
     }
 
-    public async Task<List<AdvertisementTypeModel>> GetAllAdvertisementTypes()
+    public async Task<List<AdvertisementTypeModel>?> GetAllAdvertisementTypes()
     {
         var output = _cache.Get<List<AdvertisementTypeModel>>(CacheName);
         if (output is null)

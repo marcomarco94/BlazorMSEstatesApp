@@ -97,17 +97,16 @@
 
     string _submitButton = "Send Message";
 
-    [SupplyParameterFromForm]
-    private RealtorContactModel RealtorContactForm { get; set; } = new();
-    
+    [SupplyParameterFromForm] private RealtorContactModel RealtorContactForm { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-            _company = await ApiService.GetCompany();
+        _company = await ApiService.GetCompany();
     }
 
     private async Task<string> HandleValidSubmit()
     {
-        var response = await Http.PostAsJsonAsync("api/RealtorContact/CreateRealtorContact", RealtorContactForm);
+        var response = await Http.PostAsJsonAsync("api/RealtorContacts", RealtorContactForm);
         if (response.IsSuccessStatusCode)
         {
             _submitButton = "Request submitted";
@@ -120,4 +119,5 @@
         RealtorContactForm = new RealtorContactModel();
         return _submitButton;
     }
+
 }

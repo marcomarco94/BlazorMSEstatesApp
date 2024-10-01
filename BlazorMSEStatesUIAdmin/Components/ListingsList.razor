@@ -8,14 +8,14 @@
         Orientation="Orientation.Horizontal">
         <FluentSearch
             @bind-Value="@_searchValue"
-            @bind-Value:after=HandleSearchInput
+            @bind-Value:after="HandleSearchInput"
             Placeholder="Search for State"/>
         <FluentIcon Value="@(new Icons.Regular.Size28.ArrowClockwise())" IconColor="Color.Accent" OnClick="RefreshAllListingsAsync"></FluentIcon>
     </FluentStack>
 
     @if (ListingStateService.Listings != null)
     {
-        <FluentListbox 
+        <FluentListbox
             Height="600px"
             Width="85%"
             Items="@ListingStateService.Listings"
@@ -34,7 +34,7 @@
     {
         <p>Please wait a moment. Loading...</p>
     }
-</FluentStack>  
+</FluentStack>
 
 
 @code {
@@ -49,7 +49,6 @@
         {
             await RefreshAllListingsAsync();
         }
-
     }
 
     private async Task OnSelectedListingChanged()
@@ -59,12 +58,12 @@
         SelectedListing = ListingStateService.SelectedListing;
         await SelectedListingChanged.InvokeAsync(SelectedListing);
     }
-    
+
     private async Task RefreshAllListingsAsync()
     {
         try
         {
-            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
+            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listings/no-cache");
             StateHasChanged();
         }
         catch (Exception e)
@@ -90,6 +89,7 @@
                             (p.ListingName != null && p.ListingName.Contains(_searchValue, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
         }
+
         StateHasChanged();
     }
 

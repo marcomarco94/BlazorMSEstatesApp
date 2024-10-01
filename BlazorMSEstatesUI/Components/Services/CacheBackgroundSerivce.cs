@@ -7,7 +7,8 @@ public class CacheBackgroundSerivce : BackgroundService
     private readonly CacheService _cacheService;
     private readonly ILogger<CacheBackgroundSerivce> _logger;
 
-    public CacheBackgroundSerivce(ApiService apiService, CacheService cacheService, ILogger<CacheBackgroundSerivce> logger)
+    public CacheBackgroundSerivce(ApiService apiService, CacheService cacheService,
+        ILogger<CacheBackgroundSerivce> logger)
     {
         _apiService = apiService;
         _cacheDuration = TimeSpan.FromMinutes(10);

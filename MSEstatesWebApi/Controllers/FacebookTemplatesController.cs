@@ -9,14 +9,16 @@ namespace MSEstatesWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FacebookTemplateController : Controller
+[Authorize]
+[RequiredScope("Files.ReadWrite")]
+public class FacebookTemplatesController : ControllerBase
 {
-    private readonly IFacebookTemplateData _facebookTemplateData;
-    private readonly IListingData _listingData;
-    private readonly FacebookTemplateService _facebookTemplateService;
     private readonly IFacebookPostData _facebookPostData;
+    private readonly IFacebookTemplateData _facebookTemplateData;
+    private readonly FacebookTemplateService _facebookTemplateService;
+    private readonly IListingData _listingData;
 
-    public FacebookTemplateController(IFacebookTemplateData facebookTemplateData, IFacebookPostData facebookPostData,
+    public FacebookTemplatesController(IFacebookTemplateData facebookTemplateData, IFacebookPostData facebookPostData,
         IListingData listingData, FacebookTemplateService facebookTemplateService)
     {
         _facebookTemplateData = facebookTemplateData;
@@ -25,8 +27,6 @@ public class FacebookTemplateController : Controller
         _facebookPostData = facebookPostData;
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpGet("GetFacebookTemplates")]
     public async Task<List<FacebookTemplateModel>> GetFacebookTemplates()
     {
@@ -34,37 +34,28 @@ public class FacebookTemplateController : Controller
         return templates;
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
-			  
     [HttpPost("CreateFacebookTemplate")]
-    public async Task CreateTemplate(FacebookTemplateModel facebookTemplate)
+    public async Task CreateTemplate([FromBody] FacebookTemplateModel facebookTemplate)
     {
         await _facebookTemplateData.CreateTemplate(facebookTemplate);
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpPost("UpdateTemplate")]
-    public async Task<IActionResult> UpdateTemplate([FromBody] FacebookTemplateModel? updatetTemplate)
+    public async Task<ActionResult> UpdateTemplate([FromBody] FacebookTemplateModel? updatetTemplate)
     {
         if (updatetTemplate == null) return BadRequest();
         await _facebookTemplateData.UpdateTemplate(updatetTemplate);
         return Ok();
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpDelete("DeleteTemplate/{templateId}")]
-    public async Task<IActionResult> DeleteTemplate(string templateId)
+    public async Task<ActionResult> DeleteTemplate(string templateId)
     {
         if (string.IsNullOrEmpty(templateId)) return BadRequest();
         await _facebookTemplateData.DeleteTemplate(templateId);
         return Ok();
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpGet("GetFilledTemplate/{templateId}/{listingId}")]
     public async Task<ActionResult<FacebookTemplateModel>> GetFilledTemplate(string? templateId, string? listingId)
     {
@@ -76,32 +67,25 @@ public class FacebookTemplateController : Controller
         return template;
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpGet("GetPostedTemplates")]
     public async Task<List<FacebookTemplateModel>> GetFacebookPosts()
     {
         var posts = await _facebookPostData.GetAllFacebookPosts();
         return posts.ToList();
     }
-    
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]	  
+
     [HttpPost("UpdatePostedTemplate")]
-    public async Task<IActionResult> UpdatePostedTemplate([FromBody] FacebookTemplateModel? updatetTemplate)
+    public async Task<ActionResult> UpdatePostedTemplate([FromBody] FacebookTemplateModel? updatetTemplate)
     {
         if (updatetTemplate == null) return BadRequest();
         await _facebookPostData.CreateFacebookPost(updatetTemplate);
         return Ok();
     }
 
-    [Authorize]
-    [RequiredScope("Files.ReadWrite")]
     [HttpGet("GetFacebookPostsByListingId/{id}")]
     public async Task<List<FacebookTemplateModel>> GetFacebookPostsByListingId(string id)
     {
         var posts = await _facebookPostData.GetFacebookPostsByListingId(id);
         return posts.ToList();
     }
-	
 }

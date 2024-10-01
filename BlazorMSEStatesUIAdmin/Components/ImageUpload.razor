@@ -1,56 +1,58 @@
 ﻿@using System.Net.Http.Headers
 @inject HttpClient Http
 
- <FluentInputFile @ref="@myFileByStream"
+<FluentInputFile @ref="@_myFileByStream"
                  AnchorId="MyUploadStream"
                  DragDropZoneVisible="false"
                  Mode="InputFileMode.Stream"
                  Multiple="true"
-                 MaximumFileSize="@(20 * 1024 * 1024)" 
+                 MaximumFileSize="@(20 * 1024 * 1024)"
                  MaximumFileCount="@(40)"
                  Accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .svg, .webp"
-                 OnFileUploaded="@OnFileUploadedAsync"
-                 OnCompleted="@OnCompleted" />
+                 OnCompleted="@OnCompleted"/>
 
-<FluentProgress Min="0" Max="100" Value="@progressPercent" Visible="@(progressPercent > 0)" />
+<FluentProgress Min="0" Max="100" Value="@_progressPercent" Visible="@(_progressPercent > 0)"/>
 <FluentLabel Alignment="HorizontalAlignment.Center">
-    @progressTitle
+    @_progressTitle
 </FluentLabel>
 
 <FluentButton Appearance="Appearance.Accent" Id="MyUploadStream">
     Upload files
-</FluentButton> 
+</FluentButton>
 
 
 @code
 {
     [Parameter] public string? ListingId { get; set; }
-    [Parameter]
-    public EventCallback OnUploadCompleted { get; set; }
-    FluentInputFile? myFileByStream = default!;
-    int? progressPercent;
-    string? progressTitle;
+    [Parameter] public EventCallback OnUploadCompleted { get; set; }
+    FluentInputFile? _myFileByStream = default!;
+    int? _progressPercent;
+    string? _progressTitle;
 
-
-    async Task OnFileUploadedAsync(FluentInputFileEventArgs file)
+    
+    async Task OnCompleted(IEnumerable<FluentInputFileEventArgs> files)
     {
-        progressPercent = file.ProgressPercent;
-        progressTitle = file.ProgressTitle;
-
         using var content = new MultipartFormDataContent();
-        using var streamContent = new StreamContent(file.Stream!);
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-        content.Add(streamContent, "file", file.Name);
-        content.Add(new StringContent(ListingId ?? ""), "listingId");
+        foreach (var file in files)
+        {
+            _progressPercent = file.ProgressPercent;
+            _progressTitle = file.ProgressTitle;
+            var streamContent = new StreamContent(file.Stream!);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            content.Add(streamContent, "files", file.Name);
+        }
 
-        var response = await Http.PostAsync("api/Listing/UploadImage", content);
-        
-    }
-
-    void OnCompleted(IEnumerable<FluentInputFileEventArgs> files)
-    {
-        progressPercent = myFileByStream!.ProgressPercent;
-        progressTitle = myFileByStream!.ProgressTitle;
-        OnUploadCompleted.InvokeAsync();
+        var response = await Http.PatchAsync($"api/Listings/{ListingId}/images", content);
+        if (response.IsSuccessStatusCode)
+        {
+            _progressPercent = 100;
+            _progressTitle = "Upload successful";
+            await OnUploadCompleted.InvokeAsync();
+        }
+        else
+        {
+            _progressPercent = 0;
+            _progressTitle = "Upload failed";
+        }
     }
 }

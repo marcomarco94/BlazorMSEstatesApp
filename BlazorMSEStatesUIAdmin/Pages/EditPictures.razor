@@ -9,40 +9,39 @@
 @*<FluentSplitter Orientation="Orientation.Horizontal" BarSize="6" Panel1MinSize="15%" Panel2MinSize="15%">
     <Panel1>*@
 @if (_listing != null)
-{ 
+{
     <FluentStack Orientation="Orientation.Horizontal">
-            <FluentToolbar>
-                <FluentButton Appearance="Appearance.Neutral" OnClick="OnSaveChangesClicked">Save Changes</FluentButton>
-                <FluentButton Appearance="Appearance.Neutral" OnClick="OnClearImagesClicked">Clear Images</FluentButton>
-                <ImageUpload
-                    ListingId="@_listing.Id"
-                    OnUploadCompleted="OnImageUploaded">
-                </ImageUpload>
-            </FluentToolbar>
-        </FluentStack>
-        
+        <FluentToolbar>
+            <FluentButton Appearance="Appearance.Neutral" OnClick="OnSaveChangesClicked">Save Changes</FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" OnClick="OnClearImagesClicked">Clear Images</FluentButton>
+            <ImageUpload
+                ListingId="@_listing.Id"
+                OnUploadCompleted="OnImageUploaded">
+            </ImageUpload>
+        </FluentToolbar>
+    </FluentStack>
 
-            <FluentDragContainer TItem="string"
-                                 OnDropEnd="@(e => OnDropEnd(e))">
-                <FluentGrid Spacing="2">
-                    @foreach (var imageUrl in _listing.ImageUrls)
-                    {
-                    <FluentGridItem sm="3">
-                        <FluentDropZone Id="@imageUrl" Draggable="true" Droppable="true" Style="width: 100%; height: 100%;">
-                            <img src="@ImageService.GetFullImagePath(imageUrl)" @onclick="() => OnImageClicked(imageUrl)"
-                                 alt=" Listing Image" style="width: 100%; height: 100%; object-fit: contain;"/>
-                            @if (_selectedImageUrl == imageUrl)
-                            {
-                                <FluentButton Icon="Delete" OnClick="() => OnRemoveClicked(imageUrl)">Delete</FluentButton> 
-                            }
-                        </FluentDropZone>
-                    </FluentGridItem>
-                    }
-                </FluentGrid>
-            </FluentDragContainer>
 
+    <FluentDragContainer TItem="string"
+                         OnDropEnd="@(e => OnDropEnd(e))">
+        <FluentGrid Spacing="2">
+            @foreach (var imageUrl in _listing.ImageUrls)
+            {
+                <FluentGridItem sm="3">
+                    <FluentDropZone Id="@imageUrl" Draggable="true" Droppable="true" Style="width: 100%; height: 100%;">
+                        <img src="@ImageService.GetFullImagePath(imageUrl)" @onclick="() => OnImageClicked(imageUrl)"
+                             alt=" Listing Image" style="width: 100%; height: 100%; object-fit: contain;"/>
+                        @if (_selectedImageUrl == imageUrl)
+                        {
+                            <FluentButton Icon="Delete" OnClick="() => OnRemoveClicked(imageUrl)">Delete</FluentButton>
+                        }
+                    </FluentDropZone>
+                </FluentGridItem>
             }
-        @*       </Panel1>
+        </FluentGrid>
+    </FluentDragContainer>
+}
+@*       </Panel1>
          <Panel2>
              <SfImageEditor @ref="_imageEditor" Height="700px">
                 <ImageEditorEvents Saving="OnImageSaved"></ImageEditorEvents>
@@ -54,9 +53,9 @@
     [Parameter] public string? Id { get; set; }
     private ListingModel? _listing;
     private string? _selectedImageUrl = string.Empty;
-    
+
     private readonly DialogParameters _parameters = new()
-    { 
+    {
         Title = "Info!",
         Width = "500px",
         Height = "200px",
@@ -74,24 +73,23 @@
     {
         try
         {
-            _listing = await Http.GetFromJsonAsync<ListingModel>($"api/Listing/{Id}");
+            _listing = await Http.GetFromJsonAsync<ListingModel>($"api/Listings/{Id}");
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
-
     }
 
     private async Task OnSaveChangesClicked()
     {
-        await Http.PostAsJsonAsync("api/Listing/UpdateListing", _listing);
+        await Http.PutAsJsonAsync($"api/Listings/{_listing?.Id}", _listing);
         await DialogService.ShowDialogAsync<ConfirmDialog>("Images Updated", _parameters);
         await GetListing();
         StateHasChanged();
     }
-    
+
     private async Task OnImageUploaded()
     {
         await GetListing();
@@ -105,10 +103,10 @@
 
     private void OnImageClicked(string? imageUrl)
     {
-        _selectedImageUrl = imageUrl; 
+        _selectedImageUrl = imageUrl;
     }
 
-    
+
     private void OnRemoveClicked(string? imageUrl)
     {
         _listing?.ImageUrls?.Remove(imageUrl);

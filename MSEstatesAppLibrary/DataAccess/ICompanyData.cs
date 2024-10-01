@@ -4,7 +4,7 @@ namespace MSEstatesAppLibrary.DataAccess;
 
 public interface ICompanyData
 {
-    Task<CompanyModel> GetCompany();
-    Task UpdateCompany(CompanyModel? updatedCompany);
+    Task<CompanyModel?> GetCompany();
+    Task UpdateCompany(string id, CompanyModel? updatedCompany);
     Task CreateCompany(CompanyModel company);
 }

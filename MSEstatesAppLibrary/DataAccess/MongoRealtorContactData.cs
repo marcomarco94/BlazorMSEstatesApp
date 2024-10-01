@@ -15,7 +15,7 @@ public class MongoRealtorContactData : IRealtorContactData
         _realtorContacts = db.RealtorContactCollection;
     }
 
-    public async Task<List<RealtorContactModel>> GetAllRealtorContacts()
+    public async Task<List<RealtorContactModel>?> GetAllRealtorContacts()
     {
         var output = _cache.Get<List<RealtorContactModel>>(CacheName);
         if (output is null)
@@ -40,7 +40,7 @@ public class MongoRealtorContactData : IRealtorContactData
             Builders<RealtorContactModel>.Update.Set(r => r.Archived, true));
     }
 
-    public async Task<RealtorContactModel> GetRealtorContactById(string id)
+    public async Task<RealtorContactModel?> GetRealtorContactById(string id)
     {
         var cacheKey = $"{CacheName}:id:{id}";
         var output = _cache.Get<RealtorContactModel>(cacheKey);

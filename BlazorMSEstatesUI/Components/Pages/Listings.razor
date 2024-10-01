@@ -1,10 +1,10 @@
 ﻿@page "/listings"
-@using BlazorMSEstatesUI.Components.Layout
 @inject FilterService FilterService
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
+@using BlazorMSEstatesUI.Components.Layout
 @implements IDisposable
-@rendermode InteractiveServer 
+@rendermode InteractiveServer
 
 <PageTitle>Listings</PageTitle>
 
@@ -46,9 +46,9 @@
 
         <div class="row">
             @if (_filteredListings is not null)
-            { 
-                 foreach (var l in _filteredListings) 
-                { 
+            {
+                foreach (var l in _filteredListings)
+                {
                     <div class="col-12 col-md-6 col-xl-4 pb-4">
                         <div class="single-featured-property mb-50">
                             <NavLink href="@GetListingUri(l.Id)" target="_blank" ForceReload="true">
@@ -93,12 +93,13 @@
                                 </div>
                             </NavLink>
                         </div>
-                    </div> 
-                } 
-                <div class="col-12 text-center" style="margin-bottom: 1rem;"> 
+                    </div>
+                }
+
+                <div class="col-12 text-center" style="margin-bottom: 1rem;">
                     <button class="btn btn-primary w-75 my-3 btn-lg" @onclick="LoadMore" style="font-size: 1rem;">Show More Listings</button>
                 </div>
-             } 
+            }
         </div>
         <button class="btn btn-primary btn-sm scrollToTopButton" onclick="window.scrollTo(0,0)">
             <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
@@ -112,18 +113,18 @@
 @code {
     private List<ListingModel>? _listings;
     private List<ListingModel>? _filteredListings;
-    
+
     protected override void OnInitialized()
     {
         FilterService.OnSearchFilterChanged += HandleSearchFilterChanged;
-        FilterService.GetQueryParameters(new Uri (NavigationManager.Uri));
+        FilterService.GetQueryParameters(new Uri(NavigationManager.Uri));
     }
-    
+
     protected override async Task OnInitializedAsync()
-   {
-           _listings = await ApiService.GetListings();
-           _filteredListings = FilterService.FilterListings(_listings);
-   }
+    {
+        _listings = await ApiService.GetListings();
+        _filteredListings = FilterService.FilterListings(_listings);
+    }
 
     private void OnSortChange(bool sortValue)
     {
@@ -142,7 +143,7 @@
         FilterListings();
         StateHasChanged();
     }
-    
+
     private void FilterListings()
     {
         var uriBuilder = new UriBuilder(NavigationManager.Uri)
@@ -160,7 +161,7 @@
         FilterService.ItemsToShow += 42;
         _filteredListings = FilterService.FilterListings(_listings);
     }
-    
+
     public void Dispose()
     {
         FilterService.OnSearchFilterChanged -= HandleSearchFilterChanged;
@@ -170,4 +171,5 @@
     {
         return $"/listing-detail/{listingId}";
     }
+
 }

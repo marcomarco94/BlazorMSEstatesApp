@@ -11,11 +11,11 @@ document.addEventListener('click', function (event) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     $('[data-fancybox="gallery"]').fancybox({
-        mobile : {
-            clickContent : "close",
-            clickSlide : "close"
+        mobile: {
+            clickContent: "close",
+            clickSlide: "close"
         }
     });
 })
@@ -47,7 +47,7 @@ function counter() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     $(window).scroll(function () {
         counter();
 

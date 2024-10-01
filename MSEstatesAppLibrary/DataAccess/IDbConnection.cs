@@ -4,7 +4,7 @@ namespace MSEstatesAppLibrary.DataAccess;
 
 public interface IDbConnection
 {
-    string DbName { get; }
+    string? DbName { get; }
     string CategoryCollectionName { get; }
     string LocationCollectionName { get; }
     string ListingCollectionName { get; }

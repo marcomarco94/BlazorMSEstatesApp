@@ -4,8 +4,7 @@ public class RealtorContactModel
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; private set;}
-
+    public string? Id { get; }
     public string? Name { get; set; }
     public string? Number { get; set; }
     public string? Email { get; set; }

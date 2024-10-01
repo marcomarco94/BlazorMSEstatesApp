@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace BlazorMSEstatesUIAdmin.Services;
+﻿namespace BlazorMSEstatesUIAdmin.Services;
 
 public class ImageService
 {
@@ -18,7 +16,4 @@ public class ImageService
         var newFileName = $"{fileNameWithoutExtension}_org{extension}";
         return Path.Combine(ImageBaseUrl, newFileName);
     }
-
-
-
 }

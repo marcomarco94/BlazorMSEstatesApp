@@ -9,5 +9,4 @@ public interface IFacebookTemplateData
     Task UpdateTemplate(FacebookTemplateModel facebookTemplate);
     Task<FacebookTemplateModel> GetTemplateById(string? templateId);
     Task DeleteTemplate(string templateId);
-    
 }

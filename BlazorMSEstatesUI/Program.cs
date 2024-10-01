@@ -1,7 +1,5 @@
 using BlazorMSEstatesUI;
 using Microsoft.AspNetCore.HttpOverrides;
-using System.Net;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +13,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-}
+if (!app.Environment.IsDevelopment()) app.UseExceptionHandler("/Error", true);
 
 app.MapStaticAssets();
 app.UseAntiforgery();

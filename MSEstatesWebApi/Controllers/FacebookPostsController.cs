@@ -10,16 +10,19 @@ namespace MSEstatesWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FacebookPostController : Controller
+[Authorize]
+[RequiredScope("Files.ReadWrite")]
+public class FacebookPostsController : ControllerBase
 {
     private readonly IFacebookGroupData _facebookGroupData;
+    private readonly IFacebookPostData _facebookPostData;
     private readonly FacebookPostingService _facebookPostingService;
     private readonly MarketPlacePostingService _marketPlacePostingService;
-    private readonly IFacebookPostData _facebookPostData;
 
 
-    public FacebookPostController(FacebookPostingService facebookPostingService,
-        MarketPlacePostingService marketPlacePostingService, IFacebookGroupData facebookGroupData, IFacebookPostData facebookPostData)
+    public FacebookPostsController(FacebookPostingService facebookPostingService,
+        MarketPlacePostingService marketPlacePostingService, IFacebookGroupData facebookGroupData,
+        IFacebookPostData facebookPostData)
     {
         _facebookGroupData = facebookGroupData;
         _facebookPostingService = facebookPostingService;
@@ -27,34 +30,36 @@ public class FacebookPostController : Controller
         _facebookPostData = facebookPostData;
     }
 
-    [Authorize] 
+    [Authorize]
     [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateFacebookPost")]
-    public async Task CreateFacebookPost(FacebookPostModel facebookPost)
+    public async Task CreateFacebookPost([FromBody] FacebookPostModel facebookPost)
     {
         await _facebookPostingService.CreateFacebookPost(facebookPost);
     }
-    
+
     [Authorize]
     [RequiredScope("Files.ReadWrite")]
     [HttpPost]
     [Route("CreateMarketPlacePost")]
-    public async Task CreateMarketPlacePost(FacebookPostModel facebookPost)
-    { 
+    public async Task CreateMarketPlacePost([FromBody] FacebookPostModel facebookPost)
+    {
         var facebookGroups = await _facebookGroupData.GetAllGroups();
         await _marketPlacePostingService.PublishListing(facebookPost, facebookGroups)!;
     }
-    
+
+    [Authorize]
+    [RequiredScope("Files.ReadWrite")]
     [HttpGet("PostAllPreviousListings/{startIndex}")]
     public async Task PostAllPreviousListings(int startIndex)
     {
         var facebookGroups = await _facebookGroupData.GetAllGroups();
         var facebookPosts = await _facebookPostData.GetAllFacebookPosts();
-    
-        for (int i = startIndex; i < facebookPosts.Count; i++)
+
+        for (var i = startIndex; i < facebookPosts.Count; i++)
         {
-            FacebookPostModel post = new FacebookPostModel()
+            var post = new FacebookPostModel
             {
                 ListingId = facebookPosts[i].ListingId,
                 Template = facebookPosts[i]

@@ -1,10 +1,10 @@
-using BlazorMSEstatesUI.Components.Models;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace BlazorMSEstatesUI.Components.Services;
 
 public class FilterService
 {
+    private int _itemsToShow;
     private string? _maxPriceInput;
     private string? _minPriceInput;
     private string? _searchInput;
@@ -12,7 +12,6 @@ public class FilterService
     private string? _selectedCategory;
     private string? _selectedLocation;
     private string? _sortedBy;
-    private int _itemsToShow;
 
 
     public string? SelectedAdvertisement
@@ -82,7 +81,7 @@ public class FilterService
 
     public string? MinPriceInput
     {
-        get => _minPriceInput ?? String.Empty;
+        get => _minPriceInput ?? string.Empty;
         set
         {
             if (_minPriceInput != value)
@@ -95,7 +94,7 @@ public class FilterService
 
     public string? MaxPriceInput
     {
-        get => _maxPriceInput ?? String.Empty;
+        get => _maxPriceInput ?? string.Empty;
         set
         {
             if (_maxPriceInput != value)
@@ -105,7 +104,7 @@ public class FilterService
             }
         }
     }
-    
+
     public int ItemsToShow
     {
         get => _itemsToShow == 0 ? 42 : _itemsToShow;
@@ -118,97 +117,70 @@ public class FilterService
     {
         var query = QueryHelpers.ParseQuery(uri.Query);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("advertisement", out var advertisementValue))
-        {
             _selectedAdvertisement = advertisementValue.First();
-        }
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchInput", out var searchInputValue))
-        {
             _searchInput = searchInputValue.First();
-        }
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("minPrice", out var minPriceValue))
-        {
             _minPriceInput = minPriceValue.First();
-        }
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("maxPrice", out var maxPriceValue))
-        {
             _maxPriceInput = maxPriceValue.First();
-        }
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("category", out var categoryValue))
-        {
             _selectedCategory = categoryValue.First();
-        }
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("location", out var locationValue))
-        {
             _selectedLocation = locationValue.First();
-        }
-        
+
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("sortedBy", out var sortedByValue))
-        {
             _sortedBy = sortedByValue.First();
-        }
     }
-    
-      public List<ListingModel> FilterListings(List<ListingModel> listings)
+
+    public List<ListingModel> FilterListings(List<ListingModel> listings)
     {
-         var filteredListings = new List<ListingModel>(listings);
+        var filteredListings = new List<ListingModel>(listings);
 
         if (filteredListings is not null)
         {
             if (SelectedAdvertisement != "All")
-            {
-                filteredListings = filteredListings.Where(l => l.AdvertisementType?.AdvertisementType == SelectedAdvertisement).ToList();
-            }
+                filteredListings = filteredListings
+                    .Where(l => l.AdvertisementType?.AdvertisementType == SelectedAdvertisement).ToList();
 
             if (SelectedCategory != "Category")
-            {
                 filteredListings = filteredListings.Where(l => l.Category?.Category == SelectedCategory).ToList();
-            }
 
             if (SelectedLocation != "Location")
-            {
                 filteredListings = filteredListings.Where(l => l.Location?.Location == SelectedLocation).ToList();
-            }
 
             if (string.IsNullOrWhiteSpace(SearchInput) == false)
-            {
-                filteredListings = filteredListings.Where(l => l.ListingName.Contains(SearchInput, StringComparison.InvariantCultureIgnoreCase) ||
-                                                                 l.Location.Location.Contains(SearchInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            }
-            
+                filteredListings = filteredListings.Where(l =>
+                    l.ListingName.Contains(SearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                    l.Location.Location.Contains(SearchInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
             if (string.IsNullOrWhiteSpace(MaxPriceInput) == false)
             {
-                bool canParse =  int.TryParse(MaxPriceInput, out var maxPrice);
+                var canParse = int.TryParse(MaxPriceInput, out var maxPrice);
                 if (canParse && maxPrice > 0)
-                {
                     filteredListings = filteredListings.Where(l => l.Price <= maxPrice).ToList();
-                }
             }
-            
+
             if (string.IsNullOrWhiteSpace(MinPriceInput) == false)
             {
-                bool canParse =  int.TryParse(MinPriceInput, out var minPrice);
+                var canParse = int.TryParse(MinPriceInput, out var minPrice);
                 if (canParse && minPrice > 0)
-                {
                     filteredListings = filteredListings.Where(l => l.Price >= minPrice).ToList();
-                }
             }
 
             if (SortedBy == "Price - Low to High")
-            {
                 filteredListings = filteredListings.OrderBy(l => l.Price).ToList();
-            }
             else if (SortedBy == "Price - High to Low" || SortedBy == null)
-            {
                 filteredListings = filteredListings.OrderByDescending(l => l.Price).ToList();
-            }
-            
+
             filteredListings = filteredListings.Take(ItemsToShow).ToList();
         }
+
         return filteredListings;
     }
 

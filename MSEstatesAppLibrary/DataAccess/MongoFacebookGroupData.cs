@@ -25,10 +25,7 @@ public class MongoFacebookGroupData : IFacebookGroupData
 
     public async Task UpdateGroup(FacebookGroupModel facebookGroup)
     {
-        if (facebookGroup == null)
-        {
-            throw new ArgumentNullException(nameof(facebookGroup));
-        }
+        if (facebookGroup == null) throw new ArgumentNullException(nameof(facebookGroup));
 
         var filter = Builders<FacebookGroupModel>.Filter.Eq(f => f.Id, facebookGroup.Id);
         await _facebookGroups.ReplaceOneAsync(filter, facebookGroup);
@@ -36,10 +33,7 @@ public class MongoFacebookGroupData : IFacebookGroupData
 
     public async Task<FacebookGroupModel> GetTemplateById(string? groupId)
     {
-        if (string.IsNullOrEmpty(groupId))
-        {
-            throw new ArgumentNullException(nameof(groupId));
-        }
+        if (string.IsNullOrEmpty(groupId)) throw new ArgumentNullException(nameof(groupId));
         var filter = Builders<FacebookGroupModel>.Filter.Eq(f => f.Id, groupId);
         var group = await _facebookGroups.Find(filter).FirstOrDefaultAsync();
         return group;
@@ -47,10 +41,7 @@ public class MongoFacebookGroupData : IFacebookGroupData
 
     public async Task DeleteGroup(string groupId)
     {
-        if (string.IsNullOrEmpty(groupId))
-        {
-            throw new ArgumentNullException(nameof(groupId));
-        }
+        if (string.IsNullOrEmpty(groupId)) throw new ArgumentNullException(nameof(groupId));
         var filter = Builders<FacebookGroupModel>.Filter.Eq(f => f.Id, groupId);
         await _facebookGroups.DeleteOneAsync(filter);
     }

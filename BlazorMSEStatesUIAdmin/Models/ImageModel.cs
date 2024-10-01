@@ -4,7 +4,7 @@ public class ImageModel
 {
     public ImageModel()
     {
-        string guid = Guid.NewGuid().ToString();
+        var guid = Guid.NewGuid().ToString();
         NameOriginal = guid + "_org.jpeg";
         NameResizedImageData = guid + ".jpeg";
         NameNoLogoImageData = guid + "_noLogo.jpeg";

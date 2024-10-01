@@ -1,7 +1,7 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
 
-<header class="navigation fixed-top"> 
+<header class="navigation fixed-top">
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light">
             <NavLink class="navbar-brand logo" href="" data-enhance-nav="false">
@@ -51,7 +51,7 @@
 
 @if (_currentUrl != "" && _currentUrl.Contains("?") == false)
 {
-<section class="single-page-header" style="background-image: url('@Assets["images/index/breadcrump.jpeg"]');">
+    <section class="single-page-header" style="background-image: url('@Assets["images/index/breadcrump.jpeg"]');">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -69,18 +69,18 @@
 }
 
 @code {
-    private string _currentUrl = String.Empty;
+    private string _currentUrl = string.Empty;
 
     protected override void OnInitialized()
     {
         NavigationManager.LocationChanged += OnLocationChanged;
         OnLocationChanged(this, new LocationChangedEventArgs(NavigationManager.Uri, false));
     }
-    
+
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         var uri = new Uri(NavigationManager.Uri);
-        var segments = uri.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        var segments = uri.AbsolutePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         _currentUrl = segments.Length > 0 ? segments[0].ToUpper() : "";
 
         var questionMarkIndex = _currentUrl.IndexOf("?", StringComparison.Ordinal);
@@ -88,7 +88,7 @@
         {
             _currentUrl = _currentUrl.Substring(0, questionMarkIndex);
         }
-        
+
         StateHasChanged();
     }
 

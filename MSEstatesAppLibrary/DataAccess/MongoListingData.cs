@@ -15,7 +15,7 @@ public class MongoListingData : IListingData
         _listings = db.ListingCollection;
     }
 
-    public async Task<List<ListingModel>> GetAllListings()
+    public async Task<List<ListingModel>?> GetAllListings()
     {
         var output = _cache.Get<List<ListingModel>>(CacheName);
         if (output is null)
@@ -28,16 +28,18 @@ public class MongoListingData : IListingData
 
         return output;
     }
-    
-    public async Task<List<ListingModel>> NoCache()
+
+    public async Task<List<ListingModel>?> NoCache()
     {
-            var results = await _listings.FindAsync(l => l.Archived == false);
-            return results.ToList(); 
+        var results = await _listings.FindAsync(l => l.Archived == false);
+        return results.ToList();
     }
 
     public async Task<ListingModel> CreateListing(ListingModel listing)
     {
         listing.Id = null;
+        listing.ImageUrls?.Clear();
+        listing.DateCreated = DateTime.Now;
         var count = await GetTotalListingsCount() + 1301;
         var newToken = listing.Token?.Replace("XXXX", count.ToString());
         listing.Token = newToken;
@@ -45,38 +47,20 @@ public class MongoListingData : IListingData
         return listing;
     }
 
-    public async Task<ListingModel> GetListingById(string? id)
+    public async Task<ListingModel?> GetListingById(string? id)
     {
         var result = await _listings.FindAsync(l => l.Id == id);
         var output = result.FirstOrDefault();
         return output;
     }
-    
-    public async Task<ListingModel> GetListingByToken(string token)
-    {
-        var cacheKey = $"{CacheName}:{token}";
-        var output = _cache.Get<ListingModel>(cacheKey);
-        if (output is null)
-        {
-            var result = await _listings.FindAsync(l => l.Token == token);
-            output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
-        }
-
-        return output;
-    }
 
     public async Task UpdateListing(ListingModel? updatedListing)
     {
-        if (updatedListing == null)
-        {
-            throw new ArgumentNullException(nameof(updatedListing));
-        }
-
+        if (updatedListing == null) throw new ArgumentNullException(nameof(updatedListing));
         var filter = Builders<ListingModel>.Filter.Eq(l => l.Id, updatedListing.Id);
         await _listings.ReplaceOneAsync(filter, updatedListing);
     }
-    
+
     public async Task<long> GetTotalListingsCount()
     {
         var count = await _listings.CountDocumentsAsync(_ => true);

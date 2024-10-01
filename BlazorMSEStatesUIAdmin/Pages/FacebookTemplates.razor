@@ -7,7 +7,7 @@
 <FluentHeader Style="margin: 0 0 15px 0">Facebook Templates</FluentHeader>
 
 <FluentGrid>
-      <FluentGridItem xs="12" sm="4">
+    <FluentGridItem xs="12" sm="4">
         <FaceBookTemplatesList
             @bind-SelectedTemplate="_template">
         </FaceBookTemplatesList>
@@ -16,31 +16,32 @@
 
         @if (_template != null)
         {
-            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
-                @bind-Value="@_template.Template">
+            <FluentTextArea Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                            @bind-Value="@_template.Template">
             </FluentTextArea>
             <p/>
             <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnUpdateClicked">Update @_template.Name</FluentButton>
         }
 
 
-    </FluentGridItem> 
+    </FluentGridItem>
 </FluentGrid>
 
 
 @code
 {
     private FacebookTemplateModel? _template;
-    
+
     private async Task OnUpdateClicked()
     {
         if (_template == null)
         {
             return;
         }
+
         try
         {
-        await Http.PostAsJsonAsync("api/FacebookTemplate/UpdateTemplate", _template);
+            await Http.PostAsJsonAsync("api/FacebookTemplates/UpdateTemplate", _template);
         }
         catch (Exception e)
         {
@@ -48,5 +49,5 @@
             throw;
         }
     }
-    
+
 }

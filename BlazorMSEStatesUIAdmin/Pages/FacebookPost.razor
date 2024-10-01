@@ -7,31 +7,31 @@
 
 <FluentHeader Style="margin: 0 0 15px 0">Facebook Post</FluentHeader>
 
- <FluentGrid>
-     <FluentGridItem xs="12" sm="4">
-         <FaceBookTemplatesList
-             @bind-SelectedTemplate:get="_selectedTemplate"
-             @bind-SelectedTemplate:set="OnTemplateSet">
-         </FaceBookTemplatesList>
-         <p></p>
-         <PreviousPostsList
-             Id="@Id"
-             @bind-SelectedPost:get="_selectedPost"
-             @bind-SelectedPost:set="OnPostSet">
-         </PreviousPostsList>
-     </FluentGridItem>
-    
+<FluentGrid>
+    <FluentGridItem xs="12" sm="4">
+        <FaceBookTemplatesList
+            @bind-SelectedTemplate:get="_selectedTemplate"
+            @bind-SelectedTemplate:set="OnTemplateSet">
+        </FaceBookTemplatesList>
+        <p></p>
+        <PreviousPostsList
+            Id="@Id"
+            @bind-SelectedPost:get="_selectedPost"
+            @bind-SelectedPost:set="OnPostSet">
+        </PreviousPostsList>
+    </FluentGridItem>
+
     <FluentGridItem xs="12" sm="8">
         @if (_filledTemplate != null)
         {
-            <FluentTextArea  Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
-                @bind-Value="@_filledTemplate.Template">
+            <FluentTextArea Style="width: 100%" Rows="24" Resize="TextAreaResize.Vertical"
+                            @bind-Value="@_filledTemplate.Template">
             </FluentTextArea>
             <p/>
             <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick=" PostToFacebookPage">Post to FB</FluentButton>
             <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="PostToMarketPlace">Post to Marketplace</FluentButton>
         }
-    </FluentGridItem> 
+    </FluentGridItem>
 </FluentGrid>
 
 @code
@@ -42,7 +42,7 @@
     private FacebookTemplateModel? _selectedPost;
 
     private readonly DialogParameters _parameters = new()
-    { 
+    {
         Title = "Info!",
         Width = "500px",
         Height = "200px",
@@ -50,7 +50,7 @@
         Modal = true,
         PreventScroll = true
     };
-    
+
     private async Task OnTemplateSet(FacebookTemplateModel template)
     {
         _selectedTemplate = template;
@@ -58,7 +58,7 @@
         {
             try
             {
-                _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplate/GetFilledTemplate/{_selectedTemplate.Id}/{Id}");
+                _filledTemplate = await Http.GetFromJsonAsync<FacebookTemplateModel>($"api/FacebookTemplates/GetFilledTemplate/{_selectedTemplate.Id}/{Id}");
             }
             catch (Exception e)
             {
@@ -67,26 +67,26 @@
             }
         }
     }
-    
+
     private void OnPostSet(FacebookTemplateModel post)
     {
         _selectedPost = post;
         if (_selectedPost != null)
             _filledTemplate = post;
     }
-    
-    
+
+
     private async Task PostToFacebookPage()
     {
         await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
-        FacebookPostModel post = new FacebookPostModel
+        var post = new FacebookPostModel
         {
             Template = _filledTemplate,
             ListingId = Id
         };
         try
         {
-            await Http.PostAsJsonAsync("api/FacebookPost/CreateFacebookPost", post);
+            await Http.PostAsJsonAsync("api/FacebookPosts/CreateFacebookPost", post);
         }
         catch (Exception e)
         {
@@ -94,20 +94,20 @@
             throw;
         }
     }
-    
+
     private async Task PostToMarketPlace()
     {
         await DialogService.ShowDialogAsync<ConfirmDialog>("Listing will be posted", _parameters);
-       _filledTemplate.ListingId = Id;
-        FacebookPostModel post = new FacebookPostModel
+        _filledTemplate.ListingId = Id;
+        var post = new FacebookPostModel
         {
             Template = _filledTemplate,
             ListingId = Id
         };
         try
         {
-            await Http.PostAsJsonAsync("api/FacebookTemplate/UpdatePostedTemplate", _filledTemplate);
-            await Http.PostAsJsonAsync("api/FacebookPost/CreateMarketPlacePost", post);
+            await Http.PostAsJsonAsync("api/FacebookTemplates/UpdatePostedTemplate", _filledTemplate);
+            await Http.PostAsJsonAsync("api/FacebookPosts/CreateMarketPlacePost", post);
         }
         catch (Exception e)
         {

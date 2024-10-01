@@ -16,7 +16,7 @@ public class AzureBlobService
         _connectionString = _config.GetSection("AzureBlob")["ConnectionString"];
         _containerName = _config.GetSection("AzureBlob")["ContainerName"];
     }
-    
+
     public async Task UploadFileToBlobAsync(string? blobName, byte[] fileData)
     {
         try
@@ -25,20 +25,20 @@ public class AzureBlobService
             var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
             using var uploadFileStream = new MemoryStream(fileData);
-            
+
             var blobHttpHeaders = new BlobHttpHeaders
             {
                 ContentType = "image/jpeg",
-                CacheControl = "public, max-age=31536000",
+                CacheControl = "public, max-age=31536000"
             };
-            
+
             await blobClient.UploadAsync(uploadFileStream, new BlobUploadOptions
             {
-                HttpHeaders = blobHttpHeaders,
+                HttpHeaders = blobHttpHeaders
             });
         }
         catch (Exception e)
-        {        
+        {
             Console.WriteLine(e);
             throw;
         }

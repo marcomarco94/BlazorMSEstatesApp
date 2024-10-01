@@ -18,10 +18,10 @@ public class FacebookTemplateService
             .Replace("{Token}", listing?.Token);
         return filledTemplate;
     }
-    
+
     private string GetFeatureString(ListingModel? listing)
     {
-        string featureString = "";
+        var featureString = "";
         listing?.Features?.ForEach(feature => featureString += $"🔹 {feature}\n");
         return featureString;
     }

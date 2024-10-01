@@ -5,7 +5,6 @@ public class CompanyModel
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
-
     public string? Name { get; set; }
     public string? ContactName { get; set; }
     public string? MailAddress { get; set; }

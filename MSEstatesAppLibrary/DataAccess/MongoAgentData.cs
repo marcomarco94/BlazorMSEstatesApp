@@ -15,7 +15,7 @@ public class MongoAgentData : IAgentData
         _agents = db.AgentCollection;
     }
 
-    public async Task<AgentModel> GetAgentById(string id)
+    public async Task<AgentModel?> GetAgentById(string id)
     {
         var cacheKey = $"{CacheName}:{id}";
         var output = _cache.Get<AgentModel>(cacheKey);
@@ -23,7 +23,7 @@ public class MongoAgentData : IAgentData
         {
             var result = await _agents.FindAsync(a => a.AgentId == id);
             output = result.FirstOrDefault();
-            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(5));
+            _cache.Set(cacheKey, output, TimeSpan.FromMinutes(60));
         }
 
         return output;

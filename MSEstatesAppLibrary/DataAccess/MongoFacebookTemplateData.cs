@@ -42,10 +42,7 @@ public class MongoFacebookTemplateData : IFacebookTemplateData
 
     public async Task<FacebookTemplateModel> GetTemplateById(string? templateId)
     {
-        if (string.IsNullOrEmpty(templateId))
-        {
-            throw new ArgumentNullException(nameof(templateId));
-        }
+        if (string.IsNullOrEmpty(templateId)) throw new ArgumentNullException(nameof(templateId));
         var filter = Builders<FacebookTemplateModel>.Filter.Eq(f => f.Id, templateId);
         var template = await _facebookTemplates.Find(filter).FirstOrDefaultAsync();
         return template;
@@ -53,10 +50,7 @@ public class MongoFacebookTemplateData : IFacebookTemplateData
 
     public async Task DeleteTemplate(string templateId)
     {
-        if (string.IsNullOrEmpty(templateId))
-        {
-            throw new ArgumentNullException(nameof(templateId));
-        }
+        if (string.IsNullOrEmpty(templateId)) throw new ArgumentNullException(nameof(templateId));
         var filter = Builders<FacebookTemplateModel>.Filter.Eq(f => f.Id, templateId);
         await _facebookTemplates.DeleteOneAsync(filter);
     }

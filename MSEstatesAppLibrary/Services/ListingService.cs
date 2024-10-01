@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Models;
@@ -8,29 +9,27 @@ namespace MSEstatesAppLibrary.Services;
 public class ListingService
 {
     private readonly AzureBlobService _azureBlobService;
-    private readonly IConfiguration _config;
-    private readonly string? _iimageBasePath;
+    private readonly string? _imageBasePath;
     private readonly IListingData _listingData;
 
     public ListingService(IConfiguration config, AzureBlobService azureBlobService, IListingData listingData)
     {
         _azureBlobService = azureBlobService;
-        _config = config;
-        _iimageBasePath = _config.GetSection("ImgBasePath").Value;
+        _imageBasePath = config.GetSection("ImgBasePath").Value;
         _listingData = listingData;
     }
-    
+
     public async Task<List<string>> GetFullUrlsByListingId(string? id)
     {
         var listing = await _listingData.GetListingById(id);
         var fullUrls = new List<string>();
 
-        if (listing.ImageUrls != null)
+        if (listing?.ImageUrls != null)
             foreach (var imageUrl in listing.ImageUrls)
             {
                 var imageUrlExtension = Path.GetExtension(imageUrl);
                 var imageUrlWithoutExtension = Path.GetFileNameWithoutExtension(imageUrl);
-                var orgImageUrl = $"{_iimageBasePath}{imageUrlWithoutExtension}_org{imageUrlExtension}";
+                var orgImageUrl = $"{_imageBasePath}{imageUrlWithoutExtension}_org{imageUrlExtension}";
                 fullUrls.Add(orgImageUrl);
             }
 
@@ -39,40 +38,61 @@ public class ListingService
 
     public async Task UpdateImagesOnCloud(List<string?>? oldImageUrls, List<string?>? newImageUrls)
     {
-        var deletedImageUrls = oldImageUrls.Except(newImageUrls);
-        foreach (var imageUrl in deletedImageUrls)
+        if (oldImageUrls != null && newImageUrls != null)
         {
-            await _azureBlobService.DeleteFileBlobAsync(imageUrl);
-            var imageUrlWithoutExtension = Path.GetFileNameWithoutExtension(imageUrl);
-            
-            var imageUrlExtension = Path.GetExtension(imageUrl);
-            var orgImageUrl = $"{imageUrlWithoutExtension}_org{imageUrlExtension}";
-            await _azureBlobService.DeleteFileBlobAsync(orgImageUrl);
+            var deletedImageUrls = oldImageUrls.Except(newImageUrls).ToList();
 
-            var noLogoImageUrl = $"{imageUrlWithoutExtension}_noLogo{imageUrlExtension}";
-            await _azureBlobService.DeleteFileBlobAsync(noLogoImageUrl);
+            foreach (var imageUrl in deletedImageUrls)
+            {
+                if (imageUrl == null) continue;
+                await _azureBlobService.DeleteFileBlobAsync(imageUrl);
+                var imageUrlWithoutExtension = Path.GetFileNameWithoutExtension(imageUrl);
+
+                var imageUrlExtension = Path.GetExtension(imageUrl);
+                var orgImageUrl = $"{imageUrlWithoutExtension}_org{imageUrlExtension}";
+                await _azureBlobService.DeleteFileBlobAsync(orgImageUrl);
+
+                var noLogoImageUrl = $"{imageUrlWithoutExtension}_noLogo{imageUrlExtension}";
+                await _azureBlobService.DeleteFileBlobAsync(noLogoImageUrl);
+            }
         }
     }
-    
-    public async Task <string?> ProcessAndUploadImage(Stream imageStream)
-    {
-        byte[] imageWithNoLogoData = ConvertStreamToByteArray(imageStream);
-        imageStream.Position = 0; 
-        byte[] originalImageData = AddLogoToImage(imageStream);
-        byte[] resizedImageData = ResizeImage(originalImageData);
 
-        ImageModel processedImage = new ImageModel
+    public async Task<List<string?>> ProcessAndUploadImages(IFormFileCollection files, ListingModel listing)
+    {
+        var tasks = files.Select(async file =>
+        {
+            if (file.Length <= 0) return null;
+            await using var stream = file.OpenReadStream();
+            var imageUrl = await ProcessAndUploadImage(stream);
+            return imageUrl;
+        }).ToList();
+
+        var imageUrls = await Task.WhenAll(tasks);
+        return imageUrls.ToList();
+    }
+
+    public async Task<string?> ProcessAndUploadImage(Stream imageStream)
+    {
+        var imageWithNoLogoData = ConvertStreamToByteArray(imageStream);
+        imageStream.Position = 0;
+        var originalImageData = AddLogoToImage(imageStream);
+        var resizedImageData = ResizeImage(originalImageData);
+
+        var processedImage = new ImageModel
         {
             NoLogoImageData = imageWithNoLogoData,
             OriginalImageData = originalImageData,
             ResizedImageData = resizedImageData
         };
 
-        await  _azureBlobService.UploadFileToBlobAsync(processedImage.NameNoLogoImageData, processedImage.NoLogoImageData);
+        await _azureBlobService.UploadFileToBlobAsync(processedImage.NameNoLogoImageData,
+            processedImage.NoLogoImageData);
         await _azureBlobService.UploadFileToBlobAsync(processedImage.NameOriginal, processedImage.OriginalImageData);
-        await _azureBlobService.UploadFileToBlobAsync(processedImage.NameResizedImageData, processedImage.ResizedImageData);
+        await _azureBlobService.UploadFileToBlobAsync(processedImage.NameResizedImageData,
+            processedImage.ResizedImageData);
 
-        return processedImage.NameResizedImageData; 
+        return processedImage.NameResizedImageData;
     }
 
     private byte[] ConvertStreamToByteArray(Stream stream)
@@ -80,7 +100,7 @@ public class ListingService
         using (var memoryStream = new MemoryStream())
         {
             stream.CopyTo(memoryStream);
-            stream.Position = 0; 
+            stream.Position = 0;
             return memoryStream.ToArray();
         }
     }

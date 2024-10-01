@@ -1,34 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>MSEstatesAppLibrary</RootNamespace>
-    <UserSecretsId>399c641b-77a0-4243-b21c-cabfa72c90a9</UserSecretsId>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Resources\Images\logo_white.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\logo_white.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.0" />
-    <PackageReference Include="Facebook" Version="7.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0-rc.1.24431.7" />
-    <PackageReference Include="MongoDB.Driver" Version="2.29.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0-rc.1.24431.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0-rc.1.24431.7" />
-    <PackageReference Include="Selenium.Support" Version="4.25.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.25.0" />
-    <PackageReference Include="SkiaSharp" Version="2.88.8" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Services\MarketPlace\MarketPlacePostingService.cs" />
-    <Compile Remove="Services\MarketPlace\MarketPlaceHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\MarketPlace\" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>MSEstatesAppLibrary</RootNamespace>
+        <UserSecretsId>399c641b-77a0-4243-b21c-cabfa72c90a9</UserSecretsId>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="Resources\Images\logo_white.png"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\Images\logo_white.png"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.22.1"/>
+        <PackageReference Include="Facebook" Version="7.0.6"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0-rc.1.24431.7"/>
+        <PackageReference Include="MongoDB.Driver" Version="2.29.0"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0-rc.1.24431.7"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0-rc.1.24431.7"/>
+        <PackageReference Include="Selenium.Support" Version="4.25.0"/>
+        <PackageReference Include="Selenium.WebDriver" Version="4.25.0"/>
+        <PackageReference Include="SkiaSharp" Version="2.88.8"/>
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8"/>
+    </ItemGroup>
 </Project>

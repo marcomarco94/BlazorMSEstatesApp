@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 
-
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<App>("#app");
@@ -17,8 +16,8 @@ builder.Services.AddHttpClient("WebAPI",
     {
         var handler = sp.GetRequiredService<AuthorizationMessageHandler>()
             .ConfigureHandler(
-                authorizedUrls: new[] { builder.Configuration["WebAPI:BaseAddress"] },
-                scopes: new[] { builder.Configuration["WebAPI:Scope"] });
+                new[] { builder.Configuration["WebAPI:BaseAddress"] },
+                new[] { builder.Configuration["WebAPI:Scope"] });
         return handler;
     });
 

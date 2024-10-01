@@ -13,14 +13,14 @@
 </HeadContent>
 
 <section class="hero-area" style="background-image: url('@Assets["images/index/main.jpg"]');">
-        <div class="hero-text">        
-            <h1>Welcome to MS Estates</h1>
-            <p>
-                <span>Buy/Sell</span> |
-                <span>Rentals</span> |
-                <span>Investments</span>
-            </p>
-        </div>
+    <div class="hero-text">
+        <h1>Welcome to MS Estates</h1>
+        <p>
+            <span>Buy/Sell</span> |
+            <span>Rentals</span> |
+            <span>Investments</span>
+        </p>
+    </div>
 </section>
 
 <SearchListings/>
@@ -48,13 +48,13 @@
                 @foreach (var c in _categories)
                 {
                     <div class="col-md-3 col-sm-6 col-xs-6 mb-3">
-                        <NavLink class="nav-link"  href="@GetRoute(c.Category)" data-enhance-nav="false">
-                        <div class="img-thumbnail">
-                            <img class="img-fluid" src="@c.Image" alt="Listing Category @c.Category">
-                            <h4>
-                                @c.Category
-                            </h4>
-                        </div>
+                        <NavLink class="nav-link" href="@GetRoute(c.Category)" data-enhance-nav="false">
+                            <div class="img-thumbnail">
+                                <img class="img-fluid" src="@c.Image" alt="Listing Category @c.Category">
+                                <h4>
+                                    @c.Category
+                                </h4>
+                            </div>
                         </NavLink>
                     </div>
                 }
@@ -86,7 +86,7 @@
 @code {
 
     private List<CategoryModel>? _categories;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _categories = await ApiService.GetCategories();
@@ -94,7 +94,7 @@
 
     private string GetRoute(string category)
     {
-        string categoryFormatted = category.Substring(0, 1).ToUpper() + category.Substring(1);
+        var categoryFormatted = category.Substring(0, 1).ToUpper() + category.Substring(1);
         return $"/listings?searchInput=&minPrice=&maxPrice=&category={categoryFormatted}&location=Location&selectedAdvertisement=All";
     }
 

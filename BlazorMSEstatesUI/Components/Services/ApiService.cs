@@ -1,14 +1,11 @@
-
-using BlazorMSEstatesUI.Components.Pages;
-using Microsoft.Extensions.Caching.Memory;
 namespace BlazorMSEstatesUI.Components.Services;
 
 public class ApiService
 {
-    private IConfiguration _config;
-    private readonly HttpClient _http;
     private readonly string? _basePath;
     private readonly CacheService _cacheService;
+    private readonly HttpClient _http;
+    private readonly IConfiguration _config;
 
     public ApiService(IConfiguration config, HttpClient http, CacheService cacheService)
     {
@@ -16,16 +13,15 @@ public class ApiService
         _basePath = _config.GetValue<string>("ImgBasePath");
         _http = http;
         _cacheService = cacheService;
-       
     }
 
     public async Task<List<ListingModel>> GetListings()
     {
         List<ListingModel> listings;
-         listings = _cacheService.Get<List<ListingModel>>(nameof(listings));
+        listings = _cacheService.Get<List<ListingModel>>(nameof(listings));
         if (listings == null)
         {
-            listings = await _http.GetFromJsonAsync<List<ListingModel>>("api/Listing");
+            listings = await _http.GetFromJsonAsync<List<ListingModel>>("api/Listings");
             foreach (var listing in listings)
             {
                 listing.ImageUrls = listing.ImageUrls.Select(url => Path.Combine(_basePath, url)).ToList();
@@ -36,28 +32,28 @@ public class ApiService
                     var newFileName = $"{fileNameWithoutExtension}_org{extension}";
                     return Path.Combine(_basePath, newFileName);
                 }).ToList();
-
             }
+
             _cacheService.Set(nameof(listings), listings);
         }
 
         return listings;
     }
-    
-    
+
 
     public async Task<List<CategoryModel>> GetCategories()
     {
-        List <CategoryModel> categories;
+        List<CategoryModel> categories;
         categories = _cacheService.Get<List<CategoryModel>>(nameof(categories));
-            if (categories == null)
-            {
-                categories = await _http.GetFromJsonAsync<List<CategoryModel>>("api/Category");
-                _cacheService.Set(nameof(categories), categories);
-            }
+        if (categories == null)
+        {
+            categories = await _http.GetFromJsonAsync<List<CategoryModel>>("api/Categories");
+            _cacheService.Set(nameof(categories), categories);
+        }
+
         return categories;
     }
-    
+
     public async Task<CompanyModel> GetCompany()
     {
         CompanyModel company;
@@ -67,18 +63,20 @@ public class ApiService
             company = await _http.GetFromJsonAsync<CompanyModel>("api/Company");
             _cacheService.Set(nameof(company), company);
         }
+
         return company;
     }
-    
+
     public async Task<List<LocationModel>> GetLocations()
     {
         List<LocationModel> locations;
         locations = _cacheService.Get<List<LocationModel>>(nameof(locations));
         if (locations == null)
         {
-                locations = await _http.GetFromJsonAsync<List<LocationModel>>("api/Location");
-                _cacheService.Set(nameof(locations), locations);
+            locations = await _http.GetFromJsonAsync<List<LocationModel>>("api/Locations");
+            _cacheService.Set(nameof(locations), locations);
         }
+
         return locations;
     }
 
@@ -89,15 +87,9 @@ public class ApiService
         ListingModel listing = null;
 
         listings = _cacheService.Get<List<ListingModel>>(nameof(listings));
-        if (listings.Any())
-        {
-            listing = listings.FirstOrDefault(l => l.Id == id);
-        }
+        if (listings.Any()) listing = listings.FirstOrDefault(l => l.Id == id);
 
-        if (listing == null)
-        {
-            listing = await _http.GetFromJsonAsync<ListingModel>($"api/Listing/{id}");
-        }
+        if (listing == null) listing = await _http.GetFromJsonAsync<ListingModel>($"api/Listings/{id}");
         return listing;
     }
 }

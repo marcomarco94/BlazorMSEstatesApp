@@ -8,24 +8,24 @@
 
     @if (_templates != null)
     {
-    <FluentListbox
-        Height="400px"
-        Width="100%"
-        Items="@_templates"
-        OptionText="@(t => t.Id)"
-        @bind-SelectedOption="@SelectedTemplate"
-        @bind-SelectedOption:after="OnSelectedTemplateChanged">
-        <OptionTemplate>
-            <FluentIcon Icon="Icons.Regular.Size16.Delete" Slot="end" OnClick="@(() => OnTemplateDeleteClicked(context.Id))" />
-            @context.Name
-        </OptionTemplate>
-    </FluentListbox>
-    <FluentTextField Placeholder="Template name" Style="width: 100%" Required="true"  @bind-Value="_newTemplateName"></FluentTextField>
-    <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddTemplateClicked">Add Template</FluentButton>
+        <FluentListbox
+            Height="400px"
+            Width="100%"
+            Items="@_templates"
+            OptionText="@(t => t.Id)"
+            @bind-SelectedOption="@SelectedTemplate"
+            @bind-SelectedOption:after="OnSelectedTemplateChanged">
+            <OptionTemplate>
+                <FluentIcon Icon="Icons.Regular.Size16.Delete" Slot="end" OnClick="@(() => OnTemplateDeleteClicked(context.Id))"/>
+                @context.Name
+            </OptionTemplate>
+        </FluentListbox>
+        <FluentTextField Placeholder="Template name" Style="width: 100%" Required="true" @bind-Value="_newTemplateName"></FluentTextField>
+        <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddTemplateClicked">Add Template</FluentButton>
     }
     else
     {
-    <p>Please wait a moment. Loading...</p>
+        <p>Please wait a moment. Loading...</p>
     }
 </FluentStack>
 
@@ -45,7 +45,7 @@
 
     private async Task RefreshTemplates()
     {
-        _templates = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>("api/FacebookTemplate/GetFacebookTemplates");
+        _templates = await Http.GetFromJsonAsync<List<FacebookTemplateModel>>("api/FacebookTemplates/GetFacebookTemplates");
     }
 
     private async Task OnAddTemplateClicked()
@@ -62,7 +62,7 @@
         };
         try
         {
-            var response = await Http.PostAsJsonAsync("api/FacebookTemplate/CreateFacebookTemplate", newTemplate);
+            var response = await Http.PostAsJsonAsync("api/FacebookTemplates/CreateFacebookTemplate", newTemplate);
             response.EnsureSuccessStatusCode();
             await RefreshTemplates();
             _newTemplateName = string.Empty;
@@ -82,7 +82,7 @@
     {
         try
         {
-            var response = await Http.DeleteAsync($"api/FacebookTemplate/DeleteTemplate/{templateId}");
+            var response = await Http.DeleteAsync($"api/FacebookTemplates/DeleteTemplate/{templateId}");
             response.EnsureSuccessStatusCode();
             await RefreshTemplates();
         }

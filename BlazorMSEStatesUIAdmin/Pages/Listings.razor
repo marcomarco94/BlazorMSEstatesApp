@@ -15,8 +15,8 @@
 <FluentGrid Spacing="2">
     <FluentGridItem xs="12" lg="4">
         <ListingsList
-            @bind-SelectedListing:get="ListingStateService.SelectedListing" 
-            @bind-SelectedListing:set="OnSelectedListingChanged" />
+            @bind-SelectedListing:get="ListingStateService.SelectedListing"
+            @bind-SelectedListing:set="OnSelectedListingChanged"/>
     </FluentGridItem>
     <FluentGridItem xs="12" lg="8">
         @if (ListingStateService.SelectedListing != null)
@@ -35,11 +35,11 @@
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Name</FluentLabel>
-                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.ListingName" />
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.ListingName"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Short description</FluentLabel>
-                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.ShortDescription" />
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.ShortDescription"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Description</FluentLabel>
@@ -50,31 +50,32 @@
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Bedrooms</FluentLabel>
-                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Bedrooms" />
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Bedrooms"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Bathrooms</FluentLabel>
-                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Bathrooms" />
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Bathrooms"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Size</FluentLabel>
-                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Size" />
+                        <FluentNumberField Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Size"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Price</FluentLabel>
-                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="FormattedPrice" />
+                        <FluentTextField Style="width: 85%; font-size: 1.2em" @bind-Value="FormattedPrice"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 30%; font-size: 1.2em">Features</FluentLabel>
                         <FluentSortableList Style="width: 70%; font-size: 1.2em"
                                             Items="ListingStateService.SelectedListing.Features"
                                             OnUpdate="@SortList">
-                            <ItemTemplate Context="feature">@feature
-                                <FluentIcon OnClick="() => DeleteFeatureOnClick(feature)" Value="@(new Icons.Regular.Size20.Delete())" />
+                            <ItemTemplate Context="feature">
+                                @feature
+                                <FluentIcon OnClick="() => DeleteFeatureOnClick(feature)" Value="@(new Icons.Regular.Size20.Delete())"/>
                             </ItemTemplate>
                         </FluentSortableList>
                         <FluentStack Orientation="Orientation.Vertical">
-                            <FluentTextField Placeholder="New Feature" Style="width: 100%; font-size:1.2em" @bind-Value="_newFeature" ></FluentTextField>
+                            <FluentTextField Placeholder="New Feature" Style="width: 100%; font-size:1.2em" @bind-Value="_newFeature"></FluentTextField>
                             <FluentButton Style="width: 100%; font-size:1.2em" Appearance="Appearance.Accent" OnClick="AddFeatureOnClick">Add Feature</FluentButton>
                         </FluentStack>
                     </FluentStack>
@@ -85,7 +86,7 @@
                                       @bind-SelectedOption="_selectedLocation"
                                       @bind-SelectedOption:after="@GenerateListingToken"
                                       Items="_locations"
-                                      OptionText="@(l=> l.Location)" />
+                                      OptionText="@(l => l.Location)"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Category</FluentLabel>
@@ -94,7 +95,7 @@
                                       @bind-SelectedOption="_selectedCategory"
                                       @bind-SelectedOption:after="@GenerateListingToken"
                                       Items="_categories"
-                                      OptionText="@(l=> l.Category)" />
+                                      OptionText="@(l => l.Category)"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Adverstisement Type</FluentLabel>
@@ -103,11 +104,11 @@
                                       @bind-SelectedOption="_selectedAdvertisementType"
                                       @bind-SelectedOption:after="@GenerateListingToken"
                                       Items="_advertisementTypes"
-                                      OptionText="@(l=> l.AdvertisementType)" />
+                                      OptionText="@(l => l.AdvertisementType)"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Archived</FluentLabel>
-                        <FluentCheckbox Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Archived" />
+                        <FluentCheckbox Style="width: 85%; font-size: 1.2em" @bind-Value="@ListingStateService.SelectedListing.Archived"/>
                     </FluentStack>
                     <FluentStack Orientation="Orientation.Horizontal">
                         <FluentLabel Style="width: 15%; font-size: 1.2em">Images Count</FluentLabel>
@@ -118,18 +119,25 @@
                 </FluentStack>
             </FluentEditForm>
         }
-    </FluentGridItem> 
+    </FluentGridItem>
 </FluentGrid>
 
-<script> 
-    window.triggerFileDownload = (fileName, url) => { 
-        const anchorElement = document.createElement('a'); 
-        anchorElement.href = url; 
-        anchorElement.download = fileName ?? ''; 
-        anchorElement.click(); 
-        anchorElement.remove(); 
-    } 
-</script>  
+<script>
+    window.triggerFileDownload = async (fileName, url) => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const anchorElement = document.createElement('a');
+        anchorElement.href = blobUrl;
+        anchorElement.setAttribute('download', fileName ?? '');
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+        document.body.removeChild(anchorElement);
+
+        window.URL.revokeObjectURL(blobUrl);
+    }
+</script>
 
 @code {
     private List<LocationModel>? _locations;
@@ -141,11 +149,11 @@
     private string? _newFeature;
     private string? _updatedToken;
 
-    private List<string> _selectMode = new List<string> { "Update", "Create" };
+    private readonly List<string> _selectMode = new() { "Update", "Create" };
     private string _selectedMode = "Update";
 
     private readonly DialogParameters _parameters = new()
-    { 
+    {
         Title = "Info!",
         Width = "500px",
         Height = "200px",
@@ -163,9 +171,9 @@
     {
         try
         {
-            _locations = await Http.GetFromJsonAsync<List<LocationModel>>("api/Location");
-            _advertisementTypes = await Http.GetFromJsonAsync<List<AdvertisementTypeModel>>("api/AdvertisementType");
-            _categories = await Http.GetFromJsonAsync<List<CategoryModel>>("api/Category");
+            _locations = await Http.GetFromJsonAsync<List<LocationModel>>("api/Locations");
+            _advertisementTypes = await Http.GetFromJsonAsync<List<AdvertisementTypeModel>>("api/AdvertisementTypes");
+            _categories = await Http.GetFromJsonAsync<List<CategoryModel>>("api/Categories");
         }
         catch (Exception e)
         {
@@ -173,7 +181,7 @@
             throw;
         }
     }
-    
+
     private string FormattedPrice
     {
         get => ListingStateService.SelectedListing?.Price.ToString("N0", CultureInfo.InvariantCulture) ?? string.Empty;
@@ -235,16 +243,16 @@
 
     private void DeleteFeatureOnClick(string feature)
     {
-        if (feature == String.Empty) return;
+        if (feature == string.Empty) return;
         ListingStateService.SelectedListing?.Features?.Remove(feature);
     }
-    
+
     private void GenerateListingToken()
     {
         if (ListingStateService.SelectedListing == null) return;
         var token = _selectedCategory?.Acronym +
-                        _selectedAdvertisementType?.Acronym +
-                        _selectedLocation?.Acronym;
+                    _selectedAdvertisementType?.Acronym +
+                    _selectedLocation?.Acronym;
         if (_selectedMode == "Update")
         {
             var sequenceNuber = Regex.Match(ListingStateService.SelectedListing?.Token, @"\d+").Value;
@@ -254,7 +262,6 @@
         {
             _updatedToken = token + "XXXX";
         }
-
     }
 
     private async Task DownloadImagesAsync()
@@ -288,31 +295,34 @@
         {
             if (_selectedMode == "Update")
             {
-                await Http.PostAsJsonAsync("api/Listing/UpdateListing", ListingStateService.SelectedListing);
+                await Http.PutAsJsonAsync($"api/Listings/{ListingStateService?.SelectedListing?.Id}",
+                    ListingStateService?.SelectedListing);
             }
             else
             {
                 if (ListingStateService.SelectedListing != null)
                 {
                     ListingStateService.SelectedListing.Token = _updatedToken;
-                    await Http.PostAsJsonAsync("api/Listing/CreateListing", ListingStateService.SelectedListing);
+                    await Http.PostAsJsonAsync("api/Listings", ListingStateService.SelectedListing);
                 }
             }
-            await RefreshAllListingsAsync(); 
+
+            await RefreshAllListingsAsync();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+
         StateHasChanged();
     }
-    
+
     private async Task RefreshAllListingsAsync()
     {
         try
         {
-            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listing/NoCache");
+            ListingStateService.Listings = ListingStateService.FilteredItems = await Http.GetFromJsonAsync<List<ListingModel>>("api/Listings/no-cache");
         }
         catch (Exception e)
         {
@@ -320,7 +330,7 @@
             throw;
         }
     }
-    
+
     private void NavigateToEditPictures()
     {
         var baseUri = NavigationManager.BaseUri;
@@ -334,4 +344,5 @@
         var relativePath = $"{baseUri}facebook-post/{ListingStateService.SelectedListing?.Id}";
         NavigationManager.NavigateTo(relativePath);
     }
+
 }

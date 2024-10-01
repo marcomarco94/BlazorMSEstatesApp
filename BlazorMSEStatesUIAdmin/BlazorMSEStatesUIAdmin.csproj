@@ -1,40 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>false</InvariantGlobalization>
-    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-    <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
-    <WasmExceptionHandling>true</WasmExceptionHandling>
-    <RunAOTCompilation>true</RunAOTCompilation>
-    <WasmSIMD>false</WasmSIMD>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <UserSecretsId>6649a32b-082c-46b8-96a7-1b50d71a8856</UserSecretsId>
-  </PropertyGroup>
-  <ItemGroup>
-    <TrimmerRootAssembly Include="Microsoft.FluentUI.AspNetCore.Components" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="9.0.0-rc.1.24431.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0-rc.1.24452.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0-rc.1.24452.1" />
-    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="9.0.0-rc.1.24452.1" />
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.0-rc.1.24431.7" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="Components\FaceBookTemplatesList.razor" />
-    <AdditionalFiles Include="Components\ImageUpload.razor" />
-    <AdditionalFiles Include="Components\ListingsList.razor" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="wwwroot\staticwebapp.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\.dockerignore">
-      <Link>.dockerignore</Link>
-    </Content>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>false</InvariantGlobalization>
+        <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+        <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+        <WasmExceptionHandling>true</WasmExceptionHandling>
+        <RunAOTCompilation>true</RunAOTCompilation>
+        <WasmSIMD>false</WasmSIMD>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>6649a32b-082c-46b8-96a7-1b50d71a8856</UserSecretsId>
+    </PropertyGroup>
+    <ItemGroup>
+        <TrimmerRootAssembly Include="Microsoft.FluentUI.AspNetCore.Components"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.1"/>
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.1"/>
+        <PackageReference Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="9.0.0-rc.1.24431.7"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0-rc.1.24452.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0-rc.1.24452.1"/>
+        <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="9.0.0-rc.1.24452.1"/>
+        <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.0-rc.1.24431.7"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="Components\FaceBookTemplatesList.razor"/>
+        <AdditionalFiles Include="Components\ImageUpload.razor"/>
+        <AdditionalFiles Include="Components\ListingsList.razor"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Update="wwwroot\staticwebapp.config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
+    </ItemGroup>
 </Project>

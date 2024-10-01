@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
 using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Identity.Web;
 using MSEstatesAppLibrary.DataAccess;
 using MSEstatesAppLibrary.Services;
 using MSEstatesAppLibrary.Services.MarketPlace;
-using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +19,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
-
-// Attention 
-//builder.Services.AddCors();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -46,19 +43,19 @@ builder.Services.AddSingleton<FacebookTemplateService>();
 builder.Services.AddSingleton<FacebookPostingService>();
 builder.Services.AddScoped<SeleniumService>();
 builder.Services.AddScoped<MarketPlacePostingService>();
-builder.Services.AddScoped<MSEstatesAppLibrary.Services.MarketPlace.MarketPlaceHelper>();
+builder.Services.AddScoped<MarketPlaceHelper>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost5000",
-        builder => builder.WithOrigins("http://localhost:5000")
+    options.AddPolicy("AllowLocalhost5100",
+        policyBuilder => policyBuilder.WithOrigins("http://localhost:5100")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost5000");
+app.UseCors("AllowLocalhost5100");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

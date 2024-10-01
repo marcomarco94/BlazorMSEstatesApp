@@ -15,7 +15,7 @@ public class MongoLocationData : ILocationData
         _locations = db.LocationCollection;
     }
 
-    public async Task<List<LocationModel>> GetAllLocations()
+    public async Task<List<LocationModel>?> GetAllLocations()
     {
         var output = _cache.Get<List<LocationModel>>(CacheName);
         if (output is null)
@@ -31,19 +31,13 @@ public class MongoLocationData : ILocationData
 
     public Task CreateLocation(LocationModel location)
     {
-        if (location.Id is not null)
-        {
-            location.Id = null;
-        }
+        if (location.Id is not null) location.Id = null;
         return _locations.InsertOneAsync(location);
     }
-    
+
     public async Task UpdateLocation(LocationModel? updatedLocation)
     {
-        if (updatedLocation == null)
-        {
-            throw new ArgumentNullException(nameof(updatedLocation));
-        }
+        if (updatedLocation == null) throw new ArgumentNullException(nameof(updatedLocation));
 
         var filter = Builders<LocationModel>.Filter.Eq(l => l.Id, updatedLocation.Id);
         await _locations.ReplaceOneAsync(filter, updatedLocation);

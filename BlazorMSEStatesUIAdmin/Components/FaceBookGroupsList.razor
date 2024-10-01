@@ -20,12 +20,12 @@
                 @context.GroupName
             </OptionTemplate>
         </FluentListbox>
-    <FluentTextField Placeholder="Group name" Style="width: 100%" Required="true"  @bind-Value="_newGroupName"></FluentTextField>
-    <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddGroupClicked">Add Group</FluentButton>
+        <FluentTextField Placeholder="Group name" Style="width: 100%" Required="true" @bind-Value="_newGroupName"></FluentTextField>
+        <FluentButton Style="width: 100%" Appearance="Appearance.Accent" OnClick="OnAddGroupClicked">Add Group</FluentButton>
     }
     else
     {
-    <p>Please wait a moment. Loading...</p>
+        <p>Please wait a moment. Loading...</p>
     }
 </FluentStack>
 
@@ -45,7 +45,7 @@
 
     private async Task RefreshGroups()
     {
-        _groups = await Http.GetFromJsonAsync<List<FacebookGroupModel>>("api/FacebookGroup");
+        _groups = await Http.GetFromJsonAsync<List<FacebookGroupModel>>("api/FacebookGroups");
     }
 
     private async Task OnAddGroupClicked()
@@ -57,11 +57,11 @@
 
         var newGroup = new FacebookGroupModel
         {
-            GroupName = _newGroupName,
+            GroupName = _newGroupName
         };
         try
         {
-            var response = await Http.PostAsJsonAsync("api/FacebookGroup/CreateFacebookGroup", newGroup);
+            var response = await Http.PostAsJsonAsync("api/FacebookGroups", newGroup);
             response.EnsureSuccessStatusCode();
             await RefreshGroups();
             _newGroupName = string.Empty;
@@ -77,11 +77,11 @@
         await SelectedGroupChanged.InvokeAsync(SelectedGroup);
     }
 
-    private async Task OnGroupDeleteClicked(string? groupId)
+    private async Task OnGroupDeleteClicked(string? id)
     {
         try
         {
-            var response = await Http.DeleteAsync($"api/FacebookGroup/DeleteGroup/{groupId}");
+            var response = await Http.DeleteAsync($"api/FacebookGroups/{id}");
             response.EnsureSuccessStatusCode();
             await RefreshGroups();
         }

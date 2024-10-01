@@ -15,7 +15,7 @@ public class MongoCompanyData : ICompanyData
         _company = db.CompanyCollection;
     }
 
-    public async Task<CompanyModel> GetCompany()
+    public async Task<CompanyModel?> GetCompany()
     {
         var output = _cache.Get<CompanyModel>(CacheName);
         if (output is null)
@@ -28,7 +28,7 @@ public class MongoCompanyData : ICompanyData
         return output;
     }
 
-    public async Task UpdateCompany(CompanyModel? updatedCompany)
+    public async Task UpdateCompany(string id, CompanyModel? updatedCompany)
     {
         var isEmptyCollectionFilter = Builders<CompanyModel>.Filter.Empty;
 
@@ -36,11 +36,11 @@ public class MongoCompanyData : ICompanyData
         var update = updateBuilder.Combine(
             typeof(CompanyModel)
                 .GetProperties()
-                .Where(prop => prop.GetValue(updatedCompany) != null)
-                .Select(prop => updateBuilder.Set(prop.Name, prop.GetValue(updatedCompany)))
+                .Where(prop => prop.GetValue(id) != null)
+                .Select(prop => updateBuilder.Set(prop.Name, prop.GetValue(id)))
                 .ToList()
         );
-        var updateResult = await _company.UpdateOneAsync(isEmptyCollectionFilter, update);
+        await _company.UpdateOneAsync(isEmptyCollectionFilter, update);
     }
 
     public async Task CreateCompany(CompanyModel company)

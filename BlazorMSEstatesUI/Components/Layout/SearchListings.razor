@@ -39,7 +39,7 @@
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="form-group">
                     <InputText class="search-input form-control" id="min-price"
-                           pattern="[0-9]*" type="text" placeholder="Min Price (THB)" aria-label="Min Price (THB)" maxlength="9"
+                               pattern="[0-9]*" type="text" placeholder="Min Price (THB)" aria-label="Min Price (THB)" maxlength="9"
                                @bind-Value="@FilterService.MinPriceInput"/>
                 </div>
             </div>
@@ -47,11 +47,11 @@
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="form-group">
                     <InputText class="search-input form-control" id="max-price" type="text" pattern="[0-9]*"
-                           placeholder="Max Price (THB)" aria-label="Max Price (THB)" maxlength="9"
+                               placeholder="Max Price (THB)" aria-label="Max Price (THB)" maxlength="9"
                                @bind-Value="@FilterService.MaxPriceInput"/>
                 </div>
             </div>
-            
+
 
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="form-group">
@@ -59,10 +59,10 @@
                         <option selected="@(FilterService.SelectedCategory == "Category")" value="Category">Category</option>
                         @if (_categories is not null)
                         {
-                        foreach (var c in _categories)
-                        {
-                        <option selected="@(FilterService.SelectedCategory == c.Category)" value="@c.Category">@c.Category</option>
-                        }
+                            foreach (var c in _categories)
+                            {
+                                <option selected="@(FilterService.SelectedCategory == c.Category)" value="@c.Category">@c.Category</option>
+                            }
                         }
                     </select>
                 </div>
@@ -74,17 +74,18 @@
                         <option selected="@(FilterService.SelectedLocation == "Location")" value="Location">Location</option>
                         @if (_locations is not null)
                         {
-                        foreach (var l in _locations)
-                        {
-                        <option selected="@(FilterService.SelectedLocation == l.Location)" value="@l.Location">@l.Location</option>
-                        }
+                            foreach (var l in _locations)
+                            {
+                                <option selected="@(FilterService.SelectedLocation == l.Location)" value="@l.Location">@l.Location</option>
+                            }
                         }
                     </select>
                 </div>
             </div>
             <div class="vertical-align-center">
                 <div class="col-12 col-sm-12 col-md-4 col-xl-4 btn-group">
-                    <button class="search-input btn btn btn-outline-light btn-block" @onclick="OnSearchClick">Search
+                    <button class="search-input btn btn btn-outline-light btn-block" @onclick="OnSearchClick">
+                        Search
                     </button>
                 </div>
             </div>
@@ -116,6 +117,7 @@
         {
             return "";
         }
+
         return FilterService.SelectedAdvertisement == buttonName ? "active" : "";
     }
 
@@ -164,4 +166,5 @@
     {
         FilterService.SelectedLocation = e.Value?.ToString() ?? null;
     }
+
 }

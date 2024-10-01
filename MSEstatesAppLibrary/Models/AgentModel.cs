@@ -4,8 +4,7 @@ public class AgentModel
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; private set;}
-
+    public string? Id { get; }
     public string? AgentId { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
